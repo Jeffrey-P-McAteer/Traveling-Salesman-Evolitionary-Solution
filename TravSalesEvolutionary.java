@@ -7,6 +7,10 @@ javarepl 'java.util.stream.IntStream.range(0,100).forEach(i -> System.out.printl
 
 */
 
+/**
+ * 
+ * @author Jeffrey McAteer
+ */
 public class TravSalesEvolutionary {
   public static int[][] locationCoords;
   

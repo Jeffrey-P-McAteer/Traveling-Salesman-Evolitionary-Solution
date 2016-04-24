@@ -2,6 +2,10 @@ import java.util.stream.*;
 import java.util.*;
 import java.io.*;
 
+/**
+ * 
+ * @author Jeffrey McAteer
+ */
 public class TravSalesMerge {
   public static int[][] locationCoords;
   

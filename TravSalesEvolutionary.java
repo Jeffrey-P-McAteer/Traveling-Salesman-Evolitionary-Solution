@@ -7,7 +7,7 @@ javarepl 'java.util.stream.IntStream.range(0,100).forEach(i -> System.out.printl
 
 */
 
-public class TravSales {
+public class TravSalesEvolutionary {
   public static int[][] locationCoords;
   
   public static void main(String... args) throws Exception {
@@ -32,7 +32,7 @@ public class TravSales {
     System.out.printf("Original Path length: %d\n", pathLength(path));
     System.out.println(Arrays.asList(path));
     
-    multiThreadedEvolution(path, 256, 100_000, 100_000);
+    multiThreadedEvolution(path, 1024, 100_000, 100_000);
     
     System.out.printf("Evolved length: %d\n", pathLength(path));
     System.out.println(Arrays.asList(path));

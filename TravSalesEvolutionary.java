@@ -29,14 +29,14 @@ public class TravSalesEvolutionary {
     // locationCoords is now populated with each city's x and y coord
     Integer[] path = Stream.iterate(0, n -> n + 1).limit(locationCoords.length).toArray(i -> new Integer[i]);
     
-    System.out.printf("Stats:\ncores %d\n\n",
-      Runtime.getRuntime().availableProcessors()
-    );
+    // System.out.printf("Stats:\ncores %d\n\n",
+    //   Runtime.getRuntime().availableProcessors()
+    // );
     
     System.out.printf("Original Path length: %d\n", pathLength(path));
     System.out.println(Arrays.asList(path));
     
-    multiThreadedEvolution(path, 1024, 100_000, 100_000);
+    multiThreadedEvolution(path, 1024, 10_000, 10_000);
     
     System.out.printf("Evolved length: %d\n", pathLength(path));
     System.out.println(Arrays.asList(path));
@@ -119,7 +119,7 @@ public class TravSalesEvolutionary {
   
   // not real length, is inaccurate but comparable
   public static int fastPathLength(Integer[] path) {
-    int totalLen = 0;
+    double totalLen = 0;
     for (int i=0; i<path.length-1; i += 2) {
       int firstCity = path[i];
       int secondCity = path[i+1];
@@ -128,11 +128,11 @@ public class TravSalesEvolutionary {
     int firstCity = path[0];
     int secondCity = path[path.length-1];
     totalLen += fastDistance(locationCoords[firstCity], locationCoords[secondCity]);
-    return totalLen;
+    return (int) totalLen;
   }
   
   public static int pathLength(Integer[] path) {
-    int totalLen = 0;
+    double totalLen = 0;
     for (int i=0; i<path.length-1; i += 2) {
       int firstCity = path[i];
       int secondCity = path[i+1];
@@ -141,11 +141,11 @@ public class TravSalesEvolutionary {
     int firstCity = path[0];
     int secondCity = path[path.length-1];
     totalLen += distance(locationCoords[firstCity], locationCoords[secondCity]);
-    return totalLen;
+    return (int) totalLen;
   }
   
   // not real distance, is inaccurate but comparable
-  public static int fastDistance(int[] coord1, int[] coord2) {
+  public static double fastDistance(int[] coord1, int[] coord2) {
     int[] delta = new int[] {
       coord1[0] - coord2[0],
       coord1[1] - coord2[1]
@@ -153,12 +153,12 @@ public class TravSalesEvolutionary {
     return (delta[0]*delta[0]) + (delta[1]*delta[1]);
   }
   
-  public static int distance(int[] coord1, int[] coord2) {
+  public static double distance(int[] coord1, int[] coord2) {
     int[] delta = new int[] {
       coord1[0] - coord2[0],
       coord1[1] - coord2[1]
     };
-    return (int) Math.sqrt(Math.pow(delta[0], 2) + Math.pow(delta[1], 2));
+    return Math.sqrt(Math.pow(delta[0], 2) + Math.pow(delta[1], 2));
   }
   
   public static Integer[] mutatePath(Integer[] path, int remainingMutations) {

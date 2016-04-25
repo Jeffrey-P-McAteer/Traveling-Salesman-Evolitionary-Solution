@@ -3,13 +3,10 @@ import java.util.*;
 import java.io.*;
 
 /**
- * Suggestion: for large paths (>1,000 cities) pass the -Xss128m argument
- * to the JVM to allocate more stack memory. This solution is highly recursive.
- * if the heap becomes an issue, the flag for that is -Xmx128m
  * 
  * @author Jeffrey McAteer
  */
-public class TravSalesMerge {
+public class TravSalesMergeIterative {
   public static int[][] locationCoords;
   
   public static void main(String... args) throws Exception {
@@ -27,51 +24,53 @@ public class TravSalesMerge {
     // locationCoords is now populated with each city's x and y coord
     Integer[] path = Stream.iterate(0, n -> n + 1).limit(locationCoords.length).toArray(i -> new Integer[i]);
     
-    // System.out.printf("Stats:\ncores %d\n\n",
-    //   Runtime.getRuntime().availableProcessors()
-    // );
-    
     System.out.printf("Original Path length: %d\n", pathLength(path));
-    //System.out.println(Arrays.asList(path));
+    System.out.println(Arrays.asList(path));
     
     solve(path);
     
-    System.out.printf("Merge-Solve (recursive) length: %d\n", pathLength(path));
+    System.out.printf("Merge-Solve (iterative) length: %d\n", pathLength(path));
     System.out.printf("Took %d steps for length of %d\n", steps, path.length);
-    //System.out.println(Arrays.asList(path));
+    System.out.println(Arrays.asList(path));
     
   }
   
   public static int steps = 0;
   
   public static void solve(Integer[] path) {
-    int ignoreLevel = 3;
-    while (true) {
-      try {
-        solve(path, ignoreLevel);
-        if (ignoreLevel > 3) {
-          System.out.println("had to set an ignoreLevel of "+ignoreLevel);
-        }
-        break;
-      } catch (StackOverflowError e) {
-        ignoreLevel++;
-        steps = 0;
-      }
-    }
-  }
-  
-  public static void solve(Integer[] path, int ignoreLevel) { steps++;
-    if (path.length < ignoreLevel) return; // can we avoid a stack overflow for a partial solution?
-    if (path.length < 3) return; // paths of size 2 or smaller are already 'solved'
-    // split the path into 4 paths on each quadrant
+    ArrayList<Integer[]> toSolve = new ArrayList<Integer[]>();
     Integer[][] quads = split(path);
-    for (Integer[] quadPath : quads) {
-      // solve that quadrant's path
-      solve(quadPath, ignoreLevel);
+    int nodeIndexForThisDepth = 0;
+    int max = 4;
+    // only break when quads is null and we are beginning a new depth
+    while (quads != null || nodeIndexForThisDepth != 0) { steps++;
+      if (quads != null) {
+        toSolve.add(quads[0]);
+        toSolve.add(quads[1]);
+        toSolve.add(quads[2]);
+        toSolve.add(quads[3]);
+      }
+      nodeIndexForThisDepth += 4;
+      if (nodeIndexForThisDepth >= max) {
+        max *= 4;
+        nodeIndexForThisDepth = 0;
+      }
+      quads = split(toSolve.get(0));
+      if (quads != null) toSolve.remove(0);
     }
-    // this only works because we have a _refrence_ which we operate on.
-    // After everything has been split up, we merge them back together
-    moveFrom(merge(quads), path);
+    while (toSolve.size() > 1) { steps++;
+      quads = new Integer[][] {
+        toSolve.remove(toSolve.size()-1),
+        toSolve.remove(toSolve.size()-1),
+        toSolve.remove(toSolve.size()-1),
+        toSolve.remove(toSolve.size()-1)
+      };
+      Integer[] single = merge(quads);
+      toSolve.add(0, single);
+    }
+    
+    moveFrom(toSolve.get(0), path);
+    
   }
   
   // merge the paths in quadrants together into a single path

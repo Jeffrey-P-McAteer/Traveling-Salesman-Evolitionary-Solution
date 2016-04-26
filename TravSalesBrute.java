@@ -48,7 +48,7 @@ public class TravSalesBrute {
     int swapDelta = 1;
     for (int i=1; i<allPaths.length; i++) { steps++;
       // copy previous data into next set
-      moveFrom(allPaths[i-1], allPaths[i]);
+      allPaths[i] = clone(allPaths[i-1]);
       
       // swap the elements
       Integer temp = allPaths[i][swapIndex];

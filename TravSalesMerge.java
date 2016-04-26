@@ -38,7 +38,7 @@ public class TravSalesMerge {
     
     System.out.printf("Merge-Solve (recursive) length: %d\n", pathLength(path));
     System.out.printf("Took %d steps for length of %d\n", steps, path.length);
-    //System.out.println(Arrays.asList(path));
+    System.out.println(Arrays.asList(path));
     
   }
   
@@ -60,7 +60,7 @@ public class TravSalesMerge {
     }
   }
   
-  public static void solve(Integer[] path, int ignoreLevel) { steps++;
+  public static void solve(Integer[] path, int ignoreLevel) { steps += 2; // we both split and merge in this method
     if (path.length < ignoreLevel) return; // can we avoid a stack overflow for a partial solution?
     if (path.length < 3) return; // paths of size 2 or smaller are already 'solved'
     // split the path into 4 paths on each quadrant

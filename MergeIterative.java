@@ -4,6 +4,8 @@ import java.util.*;
 import java.io.*;
 
 /**
+ * Removes the recursion in MergeRecursive.
+ * Is not an identical algorithm to MergeRecursive.
  * @author Jeffrey McAteer
  */
 public class MergeIterative extends Merge {
@@ -49,24 +51,6 @@ public class MergeIterative extends Merge {
     
     moveFrom(integerToInt(toSolve.get(0)), path);
     
-    
     return path;
   }
-  
-  public static int[] integerToInt(Integer[] items) {
-    int[] its = new int[items.length];
-    for (int i=0; i<items.length; i++) {
-      its[i] = (int) items[i];
-    }
-    return its;
-  }
-  
-  public static Integer[] intToInteger(int[] items) {
-    Integer[] its = new Integer[items.length];
-    for (int i=0; i<items.length; i++) {
-      its[i] = (Integer) items[i];
-    }
-    return its;
-  }
-  
 }

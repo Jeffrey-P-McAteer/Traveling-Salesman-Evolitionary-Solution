@@ -74,6 +74,46 @@ public class TSAlgo {
       });
   }
   
+  /* development functions */
+  
+  public static void print(ArrayList<Integer[]> ints) {
+    for (Integer[] nums : ints) {
+      print(nums);
+      out.print(", ");
+    }
+    out.println();
+  }
+  
+  public static void print(Integer[][] ints) {
+    for (Integer[] i : ints) {
+      print(i);
+      out.print(", ");
+    }
+    out.println();
+  }
+  
+  public static void print(Integer[] ints) {
+    out.print("[");
+    for (Integer i : ints) out.print(i+", ");
+    out.print("]");
+  }
+  
+  public static void print(int[][] ints) {
+    for (int[] i : ints) {
+      out.print("[ ");
+      print(i);
+      out.print(" ],");
+    }
+    out.println();
+  }
+  
+  public static void print(int[] ints) {
+    out.print("{");
+    for (int i : ints) out.print(i+", ");
+    out.print("}");
+    out.println();
+  }
+  
   /* useful functions which ought to be standard throughout every algorithm for comparison purposes */
   
   // create original path which stupidly goes from city 1 to city 2 to city 3....
@@ -83,8 +123,56 @@ public class TSAlgo {
     return path;
   }
   
+  // returns the best path from a list of possible paths
+  public static int[] getBestPath(int[]... paths) {
+    double[] pathsLengths = new double[paths.length];
+    for (int i=0; i<paths.length; i++) {
+      if (paths[i].length < 1) {
+        pathsLengths[i] = Double.MAX_VALUE;
+      } else {
+        pathsLengths[i] = fastPathLength(paths[i]);
+      }
+    }
+    int shortestIndex = 0;
+    for (int i=0; i<pathsLengths.length; i++) {
+      if (pathsLengths[i] < pathsLengths[shortestIndex]) {
+        shortestIndex = i;
+      }
+    }
+    return paths[shortestIndex];
+  }
+  
+  // returns the best path from a list of possible paths
+  public static List<Integer> getBestPath(List<List<Integer>> paths) {
+    double[] pathsLengths = new double[paths.size()];
+    for (int i=0; i<paths.size(); i++) {
+      pathsLengths[i] = fastPathLength(paths.get(i));
+    }
+    int shortestIndex = 0;
+    for (int i=0; i<pathsLengths.length; i++) {
+      if (pathsLengths[i] < pathsLengths[shortestIndex]) {
+        shortestIndex = i;
+      }
+    }
+    return paths.get(shortestIndex);
+  }
+  
   // not real length, is inaccurate but comparable
-  public static double fastPathLength(int[] path) {
+  public static double fastPathLength(List<Integer> path) {
+    double totalLen = 0;
+    for (int i=0; i<path.size()-1; i += 2) {
+      int firstCity = (int) path.get(i);
+      int secondCity = (int) path.get(i+1);
+      totalLen += fastDistance(locationCoords[firstCity], locationCoords[secondCity]);
+    }
+    int firstCity = (int) path.get(0);
+    int secondCity = (int) path.get(path.size()-1);
+    totalLen += fastDistance(locationCoords[firstCity], locationCoords[secondCity]);
+    return totalLen;
+  }
+  
+  // not real length, is inaccurate but comparable
+  public static double fastPathLength(int... path) {
     double totalLen = 0;
     for (int i=0; i<path.length-1; i += 2) {
       int firstCity = path[i];
@@ -97,7 +185,7 @@ public class TSAlgo {
     return totalLen;
   }
   
-  public static double pathLength(int[] path) {
+  public static double pathLength(int... path) {
     double totalLen = 0;
     for (int i=0; i<path.length-1; i += 2) {
       int firstCity = path[i];
@@ -183,6 +271,7 @@ public class TSAlgo {
   }
   
   public static void moveFrom(int[] a, int[] b) {
+    assert a.length == b.length;
     for (int i=0; i<a.length; i++) {
       b[i] = a[i];
     }
@@ -206,7 +295,26 @@ public class TSAlgo {
     return Arrays.copyOfRange(arr, 0, firstNullIndex);
   }
   
-  public static int[] reverse(int[] a) {
+  // My apologies for murdering java's type safety.
+  public static int[] integerToInt(Integer[] items) {
+    int[] its = new int[items.length];
+    for (int i=0; i<items.length; i++) {
+      its[i] = (int) items[i];
+    }
+    return its;
+  }
+  
+  // My apologies for murdering java's type safety.
+  public static Integer[] intToInteger(int[] items) {
+    Integer[] its = new Integer[items.length];
+    for (int i=0; i<items.length; i++) {
+      its[i] = (Integer) items[i];
+    }
+    return its;
+  }
+  
+  public static int[] reverse(int[] b) {
+    int[] a = clone(b);
     // stole & modified from stackoverflow.com/a/2137791
     for(int i = 0; i < a.length / 2; i++) {
       int temp = a[i];

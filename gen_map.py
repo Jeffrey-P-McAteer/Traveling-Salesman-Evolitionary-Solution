@@ -1,12 +1,16 @@
 import sys
+import matplotlib
 import matplotlib.pyplot as plt
 
-file = "cities.txt"
+matplotlib.rcParams['toolbar'] = 'None'
 
-if len(sys.argv) < 2 or sys.argv[1] == "":
-  print("Usage: python gen_map.py '0, 1, 2, 3'")
-  print("where the number array is the path output from a java TS solver")
+if len(sys.argv) < 3 or sys.argv[1] == "" or sys.argv[2] == "":
+  print("Usage: python gen_map.py 4 '0, 1, 2, 3'")
+  print("where 4 is the name of a file of city data under ./cities")
+  print("and the number array is the path output from a java TS solver")
   sys.exit()
+
+file = "cities/"+sys.argv[1]+".txt"
 
 def plotSingle(path):
   coords = []
@@ -32,7 +36,7 @@ def plotSingle(path):
   plt.scatter(x, y)
   plt.plot(x, y)
 
-for pathStr in sys.argv[1:]:
+for pathStr in sys.argv[2:]:
   path = []
   for numStr in pathStr.split(", "):
     path.append(int(numStr))

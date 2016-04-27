@@ -10,9 +10,9 @@ javac *.java
 
 for class in "${@:2}"; do
   if [ "$1" -lt 50 ]; then
-    java $class "cities/$1.txt"
+    java -ea $class "cities/$1.txt"
   else
-    java $class "cities/$1.txt" false # do not print path
+    java -ea $class "cities/$1.txt" false # do not print path
   fi
 done
 

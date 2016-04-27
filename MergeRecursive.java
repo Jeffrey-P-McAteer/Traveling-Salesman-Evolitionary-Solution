@@ -4,6 +4,8 @@ import java.util.*;
 import java.io.*;
 
 /**
+ * The original Split-And-Merge algorithm I wrote.
+ * Runs into stack overflow errors with inputs larger than ~250 cities
  * @author Jeffrey McAteer
  */
 public class MergeRecursive extends Merge {

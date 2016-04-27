@@ -80,20 +80,6 @@ public class Evolutionary extends TSAlgo {
     }
   }
   
-  public static int[] getBestPath(int[][] paths) {
-    double[] pathsLengths = new double[paths.length];
-    for (int i=0; i<paths.length; i++) {
-      pathsLengths[i] = fastPathLength(paths[i]);
-    }
-    int shortestIndex = 0;
-    for (int i=0; i<pathsLengths.length; i++) {
-      if (pathsLengths[i] < pathsLengths[shortestIndex]) {
-        shortestIndex = i;
-      }
-    }
-    return paths[shortestIndex];
-  }
-  
   public static int[] mutatePath(int[] path, int remainingMutations) {
     while (remainingMutations --> 0) {
       int indexToSwap = (int) (Math.random() * (path.length-1));

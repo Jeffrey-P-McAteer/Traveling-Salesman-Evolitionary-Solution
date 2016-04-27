@@ -174,7 +174,7 @@ public class TSAlgo {
   // not real length, is inaccurate but comparable
   public static double fastPathLength(int... path) {
     double totalLen = 0;
-    for (int i=0; i<path.length-1; i += 2) {
+    for (int i=0; i<path.length-1; i++) {
       int firstCity = path[i];
       int secondCity = path[i+1];
       totalLen += fastDistance(locationCoords[firstCity], locationCoords[secondCity]);
@@ -187,7 +187,7 @@ public class TSAlgo {
   
   public static double pathLength(int... path) {
     double totalLen = 0;
-    for (int i=0; i<path.length-1; i += 2) {
+    for (int i=0; i<path.length-1; i++) {
       int firstCity = path[i];
       int secondCity = path[i+1];
       totalLen += distance(locationCoords[firstCity], locationCoords[secondCity]);

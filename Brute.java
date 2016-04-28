@@ -17,32 +17,34 @@ public class Brute extends TSAlgo {
   
   public int[] solve() {
     int[] path = getDefaultPath();
+    int[][] permutations = new int[fact(path.length)][];
     
-    List<List<Integer>> allPermutations = new ArrayList<List<Integer>>();
-    permutation(allPermutations, Arrays.<Integer>asList(), Arrays.asList(intToInteger(path)));
+    permutations[0] = new int[path.length];
+    moveFrom(path, permutations[0]);
     
-    return integerToInt( getBestPath(allPermutations).toArray(new Integer[0]) );
-  }
-  
-  // stolen from janos at stackoverflow.com/a/25704865
-  // many thanks, permutations are always difficult for me
-  // and I'm only interested in a brute force algorithm for comparison purposes
-  private static void permutation(List<List<Integer>> accum, List<Integer> prefix, List<Integer> nums) {
-      int n = nums.size();
-      if (n == 0) {
-          accum.add(prefix);
-      } else {
-          for (int i = 0; i < n; ++i) {
-              List<Integer> newPrefix = new ArrayList<Integer>();
-              newPrefix.addAll(prefix);
-              newPrefix.add(nums.get(i));
-              List<Integer> numsLeft = new ArrayList<Integer>();
-              numsLeft.addAll(nums);
-              numsLeft.remove(i);
-              permutation(accum, newPrefix, numsLeft);
-          }
+    boolean inverse = false;
+    for (int i=1; i<permutations.length; i++) {
+      permutations[i] = new int[path.length];
+      moveFrom(permutations[i-1], permutations[i]);
+      
+      int toSwap = i % (path.length-1);
+      if (toSwap == 0) {
+        inverse = !inverse;
       }
+      if (inverse) {
+        int tmp = permutations[i][path.length-toSwap];
+        permutations[i][path.length-toSwap] = permutations[i][path.length-toSwap+1];
+        permutations[i][path.length-toSwap+1] = tmp;
+        
+      } else {
+        int tmp = permutations[i][toSwap];
+        permutations[i][toSwap] = permutations[i][toSwap+1];
+        permutations[i][toSwap+1] = tmp;
+      }
+      
+      //print(permutations[i]);
+    }
+    return getBestPath(permutations);
   }
-
-    
+   
 }

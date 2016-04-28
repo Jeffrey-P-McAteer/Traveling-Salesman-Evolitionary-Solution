@@ -16,11 +16,11 @@ public class Evolutionary extends TSAlgo {
   
   public int[] solve() {
     int[] path = getDefaultPath();
-    multiThreadedEvolution(path, 256, 10_000, 1_000);
+    multiThreadedEvolution(path, 64, 1000, 1000, 1000);
     return path;
   }
   
-  public static void multiThreadedEvolution(int[] original, int numPaths, int mutationCycles, int optimizationCycles) {
+  public static void multiThreadedEvolution(int[] original, int numPaths, int mutationCycles, int optimizationCycles, int innerMutationCycles) {
     int cores = Runtime.getRuntime().availableProcessors();
     int pathsPerCore = numPaths / cores;
     int[][] paths = new int[cores][original.length];
@@ -32,7 +32,7 @@ public class Evolutionary extends TSAlgo {
         public void run() {
           paths[index] = new int[original.length];
           moveFrom(original, paths[index]);
-          evolvePath(paths[index], pathsPerCore, mutationCycles, optimizationCycles);
+          evolvePath(paths[index], pathsPerCore, mutationCycles, optimizationCycles, innerMutationCycles);
         }
       };
     }
@@ -46,7 +46,7 @@ public class Evolutionary extends TSAlgo {
     moveFrom(bestPath, original);
   }
   
-  public static void evolvePath(int[] original, int numPaths, int mutationCycles, int optimizationCycles) {
+  public static void evolvePath(int[] original, int numPaths, int mutationCycles, int optimizationCycles, int innerMutationCycles) {
     int[][] paths = new int[numPaths][original.length];
     for (int i=0; i<paths.length; i++) {
       moveFrom(original, paths[i]);
@@ -55,21 +55,21 @@ public class Evolutionary extends TSAlgo {
       mutatePath(paths[i], mutationCycles);
     }
     for (int i=0; i<paths.length; i++) {
-      optimizePath(paths[i], optimizationCycles);
+      optimizePath(paths[i], optimizationCycles, innerMutationCycles);
     }
     int[] bestPath = getBestPath(paths);
     moveFrom(bestPath, original);
   }
   
-  public static void optimizePath(int[] path, int times) {
+  public static void optimizePath(int[] path, int times, int mutationCycles) {
     int turnsSinceBetterPathFound = 0;
     //int bestPathLength = pathLength(path);
-    double bestPathLength = fastPathLength(path);
+    double bestPathLength = pathLength(path);
     while (times --> 0 && turnsSinceBetterPathFound < times) { // extra breakpoint for performance
       int[] attempt = clone(path);
-      mutatePath(attempt, 10);
+      mutatePath(attempt, mutationCycles);
       //int attemptLength = pathLength(attempt);
-      double attemptLength = fastPathLength(attempt);
+      double attemptLength = pathLength(attempt);
       if (attemptLength < bestPathLength) {
         turnsSinceBetterPathFound = 0;
         bestPathLength = attemptLength;

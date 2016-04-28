@@ -17,34 +17,52 @@ public class Merge extends TSAlgo {
   // we do not implement travelling salesman
   public int[] solve() { return null; }
   
+  // walk down the next depth of our tree
+  public int[][] nextDepth(int[][] tree) {
+    int[][] next = new int[tree.length * 4][];
+    for (int i=0; i<tree.length; i++) {
+      int[][] quads = split(tree[i]);
+      int j = i*4;
+      next[j] = quads[0];
+      next[j+1] = quads[1];
+      next[j+2] = quads[2];
+      next[j+3] = quads[3];
+    }
+    return next;
+  }
+  
+  // walk up the next depth of our tree
+  public int[][] mergeDepth(int[][] tree) {
+    int[][] previous = new int[tree.length / 4][];
+    for (int i=0; i<tree.length; i += 4) {
+      int[] merged = merge(tree[i], tree[i+1], tree[i+2], tree[i+3]);
+      int j = i/4;
+      previous[j] = merged;
+    }
+    return previous;
+  }
+  
+  // check if tree of paths contains any path with more than 2 cities in it
+  public static boolean containsSplittablePath(int[][] paths) {
+    for (int[] path : paths) {
+      if (path.length > 2) return true;
+    }
+    return false;
+  }
+  
   // merge the paths in quadrants together into a single path
   public static int[] merge(int[]... paths) {
     if (paths.length == 1) {
       return paths[0];
       
     } else if (paths.length == 2) {
-      // conn is a number telling us which of the 4 possible orientations
-      // is the closest to connect two graphs.
-      int conn = closestPointsConnectingNum(paths[0], paths[1]);
       
-      if (conn == 0) return concatenate(reverse(paths[0]), paths[1]);
-      if (conn == 1) return concatenate(reverse(paths[0]), reverse(paths[1]));
-      if (conn == 2) return concatenate(paths[0], paths[1]);
-      if (conn == 3) return concatenate(paths[0], reverse(paths[1]));
-      
-      assert false:"whoops";
-      return null;
-      
-      /*int[][] variousPaths = new int[][] {
-        // stick the beginning of the first path to the beginning of the second path
+      return getBestUnclosedPath(
         concatenate(reverse(paths[0]), paths[1]),
-        // stick the beginning of the first path to the end of the second path
         concatenate(reverse(paths[0]), reverse(paths[1])),
-        // stick the end of the first path to the beginning of the second path
         concatenate(paths[0], paths[1]),
-        // stick the end of the first path to the end of the second path
-        concatenate(paths[0], reverse(paths[1])),
-      };/**/
+        concatenate(paths[0], reverse(paths[1]))
+      );
       
     } else if (paths.length == 3) {
       return merge(paths[0], merge(paths[1], paths[2]));
@@ -60,7 +78,6 @@ public class Merge extends TSAlgo {
   
   // split the path into 4 quadrants of paths
   public static int[][] split(int[] path) {
-    if (path.length < 1) return null;
     int[][] quads = new int[4][path.length]; // originally had path.length/4, but we remove nulls anyway
     setIntsToNullish(quads);
     int[] quad_i = new int[]{0, 0, 0, 0}; // indexes for quads
@@ -76,41 +93,6 @@ public class Merge extends TSAlgo {
     }
     
     return quads;
-    
-    /*int fullQuadsNum = 0;
-    for (int i=0; i<quads.length; i++) {
-      if (quads[i].length > 0) fullQuadsNum++;
-    }
-    
-    int[][] fullQuads = new int[fullQuadsNum][];
-    int j=0;
-    for (int i=0; i<quads.length; i++) {
-      if (quads[i].length > 0) {
-        fullQuads[j] = quads[i];
-        j++;
-      }
-    }
-    
-    return fullQuads;*/
-  }
-  
-  // returns 0-3, depending upon the comparison of 4 distance operations
-  public static int closestPointsConnectingNum(int[] pathA, int[] pathB) {
-    if (pathA.length < 1 || pathB.length < 1) {
-      return 0;
-    }
-    double[] dists = new double[4];
-    dists[0] = fastDistance(locationCoords[pathA[0]], locationCoords[pathB[0]]);
-    dists[1] = fastDistance(locationCoords[pathA[0]], locationCoords[pathB[pathB.length-1]]);
-    dists[2] = fastDistance(locationCoords[pathA[pathA.length-1]], locationCoords[pathB[0]]);
-    dists[3] = fastDistance(locationCoords[pathA[pathA.length-1]], locationCoords[pathB[pathB.length-1]]);
-    int closestDistIndex = 0;
-    for (int i=0; i<dists.length; i++) {
-      if (dists[i] > dists[closestDistIndex]) {
-        closestDistIndex = i;
-      }
-    }
-    return closestDistIndex;
   }
   
   // quad of 0, 1, 2, or 3. 0 is in upper right, 1 is in upper left, 2 lower left, 3 lower right
@@ -133,12 +115,14 @@ public class Merge extends TSAlgo {
   
   // get coordinates of the center of this path (or sub-path)
   public static double[] center(int[] path) {
-    assert path.length > 0;
-    double weight = 1.0/path.length;
     double[] center = new double[] {0.0, 0.0};
     for (int i : path) {
-      center[0] += weight * locationCoords[i][0];
-      center[1] += weight * locationCoords[i][1];
+      center[0] += locationCoords[i][0];
+      center[1] += locationCoords[i][1];
+    }
+    if (path.length > 1) {
+      center[0] /= path.length;
+      center[1] /= path.length;
     }
     return center;
   }

@@ -9,11 +9,11 @@ fi
 javac *.java
 
 for class in "${@:2}"; do
-  if [ "$1" -lt 50 ]; then
-    java -ea $class "cities/$1.txt"
-  else
-    java -ea $class "cities/$1.txt" false # do not print path
-  fi
+  allOut=$(java -ea $class "cities/$1.txt")
+  pth=$(echo "$allOut" | tail -n 1 | sed 's/.*: //g')
+  len=$(echo "$allOut" | head -n 1 | cut -d' ' -f 11)
+  python gen_map.py "$class - $len" "$pth" &
+  echo "$allOut"
 done
 
 rm *.class

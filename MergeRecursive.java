@@ -17,33 +17,24 @@ public class MergeRecursive extends Merge {
   
   public int[] solve() {
     int[] path = getDefaultPath();
-    
-    int ignoreLevel = 3;
-    while (true) {
-      try {
-        solve(path, ignoreLevel);
-        if (ignoreLevel > 3) {
-          System.out.println("Warning: had to set an ignoreLevel of "+ignoreLevel);
-        }
-        break;
-      } catch (StackOverflowError e) {
-        ignoreLevel++;
-      }
-    }
+    solve(path, 0);
     return path;
   }
   
-  public static void solve(int[] path, int ignoreLevel) {
-    if (path.length < ignoreLevel) return; // can we avoid a stack overflow for a partial solution?
-    if (path.length < 3) return; // paths of size 2 or smaller are already 'solved'
+  public static void solve(int[] path, int depth) {
+    depth++;
+    // paths of size 2 or smaller are already 'solved'
+    // a depth > ~5000 means we're about to blow the 512kb stack.
+    if (path.length < 3 || depth > 5000) return;
+    
     // split the path into 4 paths on each quadrant
     int[][] quads = split(path);
     for (int[] quadPath : quads) {
       // solve that quadrant's path
-      solve(quadPath, ignoreLevel);
+      solve(quadPath, depth);
     }
-    // this only works because we have a _refrence_ which we operate on.
     // After everything has been split up, we merge them back together
+    // this only works because we have a refrence to path, which we operate on.
     moveFrom(merge(quads), path);
   }
   

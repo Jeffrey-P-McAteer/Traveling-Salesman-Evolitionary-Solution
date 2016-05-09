@@ -7,16 +7,18 @@ import java.io.*;
  * Evolutionary solution to travelling salesman
  * @author Jeffrey McAteer
  */
-public class Evolutionary extends TSAlgo {
-  public String getAlgoName() { return "Evolutionary"; }
+public class RocketBoostedEvolution extends TSAlgo {
+  public String getAlgoName() { return "RocketBoostedEvolution"; }
   
   public static void main(String... args) throws Exception {
-    test(new Evolutionary(), args);
+    test(new RocketBoostedEvolution(), args);
   }
   
   public int[] solve() {
-    int[] path = getDefaultPath();
-    multiThreadedEvolution(path, 128, 4000, 4000, 500);
+    int[] path = new MergeIterative().solve(); // literally the only difference between this and Evolutionary.java
+    //multiThreadedEvolution(path, 512, -1, 1_000, 100); // on an i5 takes ~ 1 second
+    multiThreadedEvolution(path, 1024, -1, 10_000, 100); // on an i5 takes ~ 40 seconds
+    //multiThreadedEvolution(path, 2048, -1, 100_000, 100); // on an i5 takes ~ 20 minutes
     return path;
   }
   
@@ -61,13 +63,13 @@ public class Evolutionary extends TSAlgo {
     moveFrom(bestPath, original);
   }
   
-  public static void optimizePath(int[] path, int times, int mutationCycles) {
+  public static void optimizePath(int[] path, int times, int maxMutationCycles) {
     int turnsSinceBetterPathFound = 0;
     //int bestPathLength = pathLength(path);
     double bestPathLength = pathLength(path);
     while (times --> 0 && turnsSinceBetterPathFound < times) { // extra breakpoint for performance
       int[] attempt = clone(path);
-      mutatePath(attempt, mutationCycles);
+      mutatePath(attempt, (int) (Math.random() * maxMutationCycles));
       //int attemptLength = pathLength(attempt);
       double attemptLength = pathLength(attempt);
       if (attemptLength < bestPathLength) {

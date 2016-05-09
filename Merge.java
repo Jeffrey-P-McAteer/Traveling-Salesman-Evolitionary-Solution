@@ -33,6 +33,14 @@ public class Merge extends TSAlgo {
   
   // walk up the next depth of our tree
   public int[][] mergeDepth(int[][] tree) {
+    /*out.println("=== Tree ===");
+    for (int[] is : tree) {
+      for (int i : is) {
+        out.print("("+locationCoords[i][0]+", "+locationCoords[i][1]+"), ");
+      }
+      out.println();
+    }*/
+    
     int[][] previous = new int[tree.length / 4][];
     for (int i=0; i<tree.length; i += 4) {
       int[] merged = merge(tree[i], tree[i+1], tree[i+2], tree[i+3]);
@@ -65,10 +73,19 @@ public class Merge extends TSAlgo {
       );
       
     } else if (paths.length == 3) {
-      return merge(paths[0], merge(paths[1], paths[2]));
+      return getBestUnclosedPath( // this 'best' may be redundant
+        merge(paths[0], merge(paths[1], paths[2])),
+        merge(paths[2], merge(paths[0], paths[1])),
+        merge(paths[1], merge(paths[2], paths[0]))
+      );
       
     } else if (paths.length == 4) {
-      return merge(merge(paths[0], paths[1]), merge(paths[2], paths[3]));
+      return getBestUnclosedPath(
+        merge(merge(paths[0], paths[1]), merge(paths[2], paths[3])),
+        merge(merge(paths[3], paths[0]), merge(paths[1], paths[2])),
+        merge(merge(paths[2], paths[3]), merge(paths[0], paths[1])),
+        merge(merge(paths[1], paths[2]), merge(paths[3], paths[0]))
+      );
       
     } else {
       assert false: "I didn't know this could happen.";

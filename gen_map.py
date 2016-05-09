@@ -24,6 +24,9 @@ for pair in coords:
   x.append(pair[0])
   y.append(pair[1])
 
+x.append(coords[0][0])
+y.append(coords[0][1])
+
 plt.scatter(x, y)
 plt.plot(x, y)
 

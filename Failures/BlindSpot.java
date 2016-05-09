@@ -6,6 +6,8 @@ import java.io.*;
 /**
  * An adaptation to Merge* algorithms
  * 
+ * A horrid failure, it only works well on grid-based cities and even then has faults.
+ * 
  * @author Jeffrey McAteer
  */
 public class BlindSpot extends TSAlgo {
@@ -159,6 +161,9 @@ public class BlindSpot extends TSAlgo {
     };
     
     boolean use_weighted_center = false;
+    double weight = 0.25; // % away from borders
+    assert weight <= 0.50;
+    
     if (use_weighted_center) {
       int[][] quads = new int[4][path.length];
       setIntsToNullish(quads);
@@ -211,10 +216,10 @@ public class BlindSpot extends TSAlgo {
       int right = locationCoords[right_most][0];
       int bot   = locationCoords[bot_most][1];
       
-      double left_x = ((right - left) * 0.25) + left;
-      double right_x = ((right - left) * 0.75) + left;
-      double top_y = ((top - bot) * 0.75) + bot;
-      double bot_y = ((top - bot) * 0.25) + bot;
+      double left_x = ((right - left) * weight) + left;
+      double right_x = ((right - left) * (1.0 - weight)) + left;
+      double top_y = ((top - bot) * (1.0 - weight)) + bot;
+      double bot_y = ((top - bot) * weight) + bot;
       
       return new double[][] { // index 0 is upper right, index 1 is upper left, 2 lower left, 3 lower right. 
         {right_x, top_y},

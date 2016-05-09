@@ -16,8 +16,8 @@ public class RocketBoostedEvolution extends TSAlgo {
   
   public int[] solve() {
     int[] path = new MergeIterative().solve(); // literally the only difference between this and Evolutionary.java
-    //multiThreadedEvolution(path, 512, -1, 1_000, 100); // on an i5 takes ~ 1 second
-    multiThreadedEvolution(path, 1024, -1, 10_000, 100); // on an i5 takes ~ 40 seconds
+    multiThreadedEvolution(path, 512, -1, 1_000, 100); // on an i5 takes ~ 1 second
+    //multiThreadedEvolution(path, 1024, -1, 10_000, 100); // on an i5 takes ~ 40 seconds
     //multiThreadedEvolution(path, 2048, -1, 100_000, 100); // on an i5 takes ~ 20 minutes
     return path;
   }

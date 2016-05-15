@@ -9,7 +9,7 @@ import java.io.*;
  * @author Jeffrey McAteer
  */
 public class MergeRecursive extends Merge {
-  public String getAlgoName() { return "Merge Recursive"; }
+  public String getAlgoName() { return "MergeRecursive"; }
   
   public static void main(String... args) throws Exception {
     test(new MergeRecursive(), args);

@@ -182,13 +182,20 @@ public class TSAlgo {
     }
   }
   
-  // sets all values in 2d array to -1
-  public static void setIntsToNullish(int[][] arr) {
-    for (int i=0; i<arr.length; i++) {
-      for (int j=0; j<arr[i].length; j++) {
-        arr[i][j] = -1;
-      }
+  // sets all values in array to -1
+  public static int[] setIntsToNullish(int[] arr) {
+    for (int j=0; j<arr.length; j++) {
+      arr[j] = -1;
     }
+    return arr;
+  }
+  
+  // sets all values in 2d array to -1
+  public static int[][] setIntsToNullish(int[][] arr) {
+    for (int i=0; i<arr.length; i++) {
+      setIntsToNullish(arr[i]);
+    }
+    return arr;
   }
   
   // in the case of int datatypes we assume negatives are 'null' values
@@ -198,6 +205,14 @@ public class TSAlgo {
     int firstNullIndex = 0;
     while (firstNullIndex < arr.length && arr[firstNullIndex] >= 0) firstNullIndex++;
     return Arrays.copyOfRange(arr, 0, firstNullIndex);
+  }
+  
+  // does not remove empty lists
+  public static int[][] removeNulls(int[][] arr) {
+    for (int i=0; i<arr.length; i++) {
+      arr[i] = removeNulls(arr[i]);
+    }
+    return arr;
   }
   
   public static int fact(int n) {

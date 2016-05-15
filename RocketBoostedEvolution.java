@@ -16,7 +16,8 @@ public class RocketBoostedEvolution extends TSAlgo {
   
   public int[] solve() {
     int[] path = new MergeIterative().solve(); // literally the only difference between this and Evolutionary.java
-    multiThreadedEvolution(path, 512, -1, 1_000, 100); // on an i5 takes ~ 1 second
+    multiThreadedEvolution(path, 128, -1, 1_000, 100); // on an i5 takes ~ 1 seconds
+    //multiThreadedEvolution(path, 1024, -1, 1_000, 100); // on an i5 takes ~ 2 seconds
     //multiThreadedEvolution(path, 1024, -1, 10_000, 100); // on an i5 takes ~ 40 seconds
     //multiThreadedEvolution(path, 2048, -1, 100_000, 100); // on an i5 takes ~ 20 minutes
     return path;
@@ -82,6 +83,7 @@ public class RocketBoostedEvolution extends TSAlgo {
     }
   }
   
+  // note for future optimization: swapping directly adjacent nodes is equally as effective as random nodes.
   public static int[] mutatePath(int[] path, int remainingMutations) {
     while (remainingMutations --> 0) {
       int indexToSwap = (int) (Math.random() * (path.length-1));
@@ -91,5 +93,20 @@ public class RocketBoostedEvolution extends TSAlgo {
     }
     return path;
   }
+  
+  // I do, however, leave the aforementioned method commented below if any ideas arise
+  /*
+  public static int[] mutatePath(int[] path, int remainingMutations) {
+    while (remainingMutations --> 0) {
+      int indexAToSwap = (int) (Math.random() * (path.length-1));
+      int indexBToSwap = (int) (Math.random() * (path.length-2));
+      if (indexAToSwap == indexBToSwap) indexBToSwap++;
+      int tmp = path[indexAToSwap];
+      path[indexAToSwap] = path[indexBToSwap];
+      path[indexBToSwap] = tmp;
+    }
+    return path;
+  }
+  */
   
 }

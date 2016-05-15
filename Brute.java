@@ -5,7 +5,7 @@ import java.io.*;
 
 
 /**
- * 
+ * Currently a bit broken. Some sort of index out of bounds when creating permutations.
  * @author Jeffrey McAteer
  */
 public class Brute extends TSAlgo {

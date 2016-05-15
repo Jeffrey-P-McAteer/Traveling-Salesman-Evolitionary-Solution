@@ -9,7 +9,7 @@ import java.io.*;
  * @author Jeffrey McAteer
  */
 public class MergeIterative extends Merge {
-  public String getAlgoName() { return "Merge Iterative"; }
+  public String getAlgoName() { return "MergeIterative"; }
   
   public static void main(String... args) throws Exception {
     test(new MergeIterative(), args);

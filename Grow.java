@@ -74,6 +74,7 @@ public class Grow extends TSAlgo {
     return path;
   }
   
+  public static double edge_length_coefficient = 0.0;
   /**
    * Describes the weight of an edge between a and b, and point p.
    */
@@ -87,10 +88,19 @@ public class Grow extends TSAlgo {
       Math.pow(midpoint[0] - point[0], 2) + 
       Math.pow(midpoint[1] - point[1], 2)
     );
-    // todo: add the term describing the length of the edge
-    //double edge_length = Math.sqrt();
     
-    return distance;
+    double edge_length = Math.sqrt(
+      Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
+      Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
+    );
+    
+    //edge_length *= edge_length_coefficient;
+    //edge_length *= Math.sin(edge_length)/1000;
+    //edge_length *= Math.sin(edge_length*edge_length_coefficient);
+    
+    edge_length *= distance/100.0;
+    
+    return distance + edge_length;
   }
   
 }

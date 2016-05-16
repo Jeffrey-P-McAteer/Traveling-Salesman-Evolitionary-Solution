@@ -17,8 +17,8 @@ public class RocketBoostedEvolution extends TSAlgo {
   public int[] solve() {
     // Update to use the best algorithm we have so far
     int[] path = new GrowExpensive().solve(); // literally the only difference between this and Evolutionary.java
-    //multiThreadedEvolution(path, 32, -1, 100, 100);
-    multiThreadedEvolution(path, 4096, -1, 1_000, 1_000);
+    multiThreadedEvolution(path, 32, -1, 100, 100);
+    //multiThreadedEvolution(path, 4096, -1, 1_000, 1_000);
     //multiThreadedEvolution(path, 128, -1, 1_000, 100); // on an i5 takes ~ 1 seconds
     //multiThreadedEvolution(path, 1024, -1, 1_000, 100); // on an i5 takes ~ 2 seconds
     //multiThreadedEvolution(path, 1024, -1, 10_000, 100); // on an i5 takes ~ 40 seconds

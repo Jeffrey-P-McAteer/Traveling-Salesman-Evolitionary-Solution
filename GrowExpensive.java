@@ -8,6 +8,8 @@ import java.io.*;
  * For each remaining coordinate, join it with every selected edge
  * and choose to join at the egde that gives the smallest TSP size.
  * 
+ * c2 gives this one trouble...
+ * 
  * @author Jeffrey McAteer
  */
 public class GrowExpensive extends TSAlgo {
@@ -37,10 +39,12 @@ public class GrowExpensive extends TSAlgo {
     while (unselected.size() > 0) {
       Integer point = unselected.remove(0);
       int insert = 0; // index to insert point at in selected
+      double insert_len_test = lengthTest(selected, insert, point);
       // for all edges in selected points
-      for (int i=0; i<selected.size(); i++) {
-        if (lengthTest(selected, i, point) < lengthTest(selected, insert, point)) {
+      for (int i=0; i<selected.size()+1; i++) {
+        if (lengthTest(selected, i, point) < insert_len_test) {
           insert = i;
+          insert_len_test = lengthTest(selected, insert, point);
         }
       }
       selected.add(insert, point);

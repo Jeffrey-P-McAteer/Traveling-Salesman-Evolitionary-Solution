@@ -37,9 +37,15 @@ public class Grow extends TSAlgo {
       selected.add( unselected.remove(0) );
     }
     
+    double total = unselected.size() + 3.0;
+    long begin_nano = System.nanoTime();
     // for the remaining unselected numbers
     while (unselected.size() > 0) {
-      System.err.printf("%d remaining            \r", unselected.size());
+      long elapsed_ms = (System.nanoTime() - begin_nano) / 1_000_000l;
+      long milliseconds_per_point = elapsed_ms / selected.size();
+      long remaining_ms = unselected.size() * milliseconds_per_point;
+      System.err.printf("%.4f%% complete, %,dms remaining   \r", (double) selected.size()/total, remaining_ms);
+      
       Integer point = unselected.remove(0);
       int insert = 1; // index to insert point at in selected
       // for all edges in selected points, except the last edge
@@ -75,7 +81,6 @@ public class Grow extends TSAlgo {
     return path;
   }
   
-  public static double edge_length_coefficient = 0.0;
   /**
    * Describes the weight of an edge between a and b, and point p.
    */
@@ -94,10 +99,6 @@ public class Grow extends TSAlgo {
       Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
       Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
     );
-    
-    //edge_length *= edge_length_coefficient;
-    //edge_length *= Math.sin(edge_length)/1000;
-    //edge_length *= Math.sin(edge_length*edge_length_coefficient);
     
     edge_length *= distance/100.0;
     

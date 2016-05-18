@@ -41,10 +41,16 @@ public class Grow extends TSAlgo {
     long begin_nano = System.nanoTime();
     // for the remaining unselected numbers
     while (unselected.size() > 0) {
-      long elapsed_ms = (System.nanoTime() - begin_nano) / 1_000_000l;
-      long milliseconds_per_point = elapsed_ms / selected.size();
-      long remaining_ms = unselected.size() * milliseconds_per_point;
-      System.err.printf("%.4f%% complete, %,dms remaining   \r", (double) selected.size()/total, remaining_ms);
+      if (unselected.size() % 100 == 0) {
+        long elapsed_ms = (System.nanoTime() - begin_nano) / 1_000_000l;
+        long milliseconds_per_point = elapsed_ms / selected.size();
+        long remaining_ms = unselected.size() * milliseconds_per_point;
+        int[] path = new int[selected.size()];
+        for (int i=0; i<path.length; i++) {
+          path[i] = selected.get(i);
+        }
+        System.err.printf("%.4f%% complete, %,dms remaining, path length %,.2f units \r", (double) selected.size()/total, remaining_ms, pathLength(path));
+      }
       
       Integer point = unselected.remove(0);
       int insert = 1; // index to insert point at in selected
@@ -107,7 +113,7 @@ public class Grow extends TSAlgo {
   
   // optimized for large-scale test
   double weight(Integer a, Integer b, Integer p) {
-    int[] point = locationCoords[p];
+    double[] point = locationCoords[p];
     double[] midpoint = new double[] {
       (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
       (locationCoords[a][1] + locationCoords[b][1]) / 2.0,

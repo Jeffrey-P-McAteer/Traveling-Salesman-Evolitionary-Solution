@@ -13,7 +13,7 @@ public class TSAlgo {
   // Override and change to appropriate algo name
   public String getAlgoName() { return "None"; }
   
-  public static int[][] locationCoords;
+  public static double[][] locationCoords;
   
   // Must be overidden
   // Should return the best possible path for the cities in locationCoords
@@ -52,7 +52,7 @@ public class TSAlgo {
       //*
       System.out.printf("Path coordinates: ");
       for (int p : path) {
-        System.out.printf("(%d, %d) ", locationCoords[p][0], locationCoords[p][1]);
+        System.out.printf("(%.1f, %.1f) ", locationCoords[p][0], locationCoords[p][1]);
       }
       System.out.println();
       /**/
@@ -69,18 +69,18 @@ public class TSAlgo {
   private static void populateLocationCoords(String filename) throws Exception {
     String citiesData = new Scanner(new File(filename)).useDelimiter("\\Z").next();
     String[] cities = citiesData.split("\n");
-    locationCoords = new int[cities.length][2];
+    locationCoords = new double[cities.length][2];
     IntStream.range(0, cities.length)
       .forEach(i -> {
         String[] xAndY = cities[i].split(" ");
         IntStream.range(0, xAndY.length)
-          .forEach(j -> locationCoords[i][j] = Integer.parseInt(xAndY[j]));
+          .forEach(j -> locationCoords[i][j] = Double.parseDouble(xAndY[j]));
       });
   }
   
   /* development functions */
   
-  public static void print(int[][] ints) {
+  /*public static void print(int[][] ints) {
     for (int[] i : ints) {
       out.print("[ ");
       print(i);
@@ -94,7 +94,7 @@ public class TSAlgo {
     for (int i : ints) out.print(i+", ");
     out.print("}");
     out.println();
-  }
+  }*/
   
   /* useful functions which ought to be standard throughout every algorithm for comparison purposes */
   
@@ -159,8 +159,8 @@ public class TSAlgo {
     return totalLen;
   }
   
-  public static double distance(int[] coord1, int[] coord2) {
-    int[] delta = new int[] {
+  public static double distance(double[] coord1, double[] coord2) {
+    double[] delta = new double[] {
       coord1[0] - coord2[0],
       coord1[1] - coord2[1]
     };

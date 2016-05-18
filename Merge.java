@@ -115,7 +115,7 @@ public class Merge extends TSAlgo {
   // quad of 0, 1, 2, or 3. 0 is in upper right, 1 is in upper left, 2 lower left, 3 lower right
   // NB: 0,0 is in quad 1. Basically, values of 0 round upwards towards 1
   // quadrants are relative to the origin coordinates
-  public static int quadrant(double[] origin, int[] coord) {
+  public static int quadrant(double[] origin, double[] coord) {
     if (coord[0] >= origin[0] && coord[1] >= origin[1]) {
       // x is 'positive' and y is 'positive'
       return 0;

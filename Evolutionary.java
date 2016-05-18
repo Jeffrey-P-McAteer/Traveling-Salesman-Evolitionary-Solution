@@ -16,7 +16,8 @@ public class Evolutionary extends TSAlgo {
   
   public int[] solve() {
     int[] path = getDefaultPath();
-    multiThreadedEvolution(path, 128, 4000, 4000, 500);
+    multiThreadedEvolution(path, 128, 100, 100, 100);
+    //multiThreadedEvolution(path, 128, 4000, 4000, 500);
     return path;
   }
   

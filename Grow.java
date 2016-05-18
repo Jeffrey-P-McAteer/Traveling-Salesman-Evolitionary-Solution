@@ -39,6 +39,7 @@ public class Grow extends TSAlgo {
     
     // for the remaining unselected numbers
     while (unselected.size() > 0) {
+      System.err.printf("%d remaining            \r", unselected.size());
       Integer point = unselected.remove(0);
       int insert = 1; // index to insert point at in selected
       // for all edges in selected points, except the last edge

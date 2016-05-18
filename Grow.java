@@ -84,25 +84,37 @@ public class Grow extends TSAlgo {
   /**
    * Describes the weight of an edge between a and b, and point p.
    */
+  // double weight(Integer a, Integer b, Integer p) {
+  //   int[] point = locationCoords[p];
+  //   double[] midpoint = new double[] {
+  //     (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
+  //     (locationCoords[a][1] + locationCoords[b][1]) / 2.0,
+  //   };
+  //   double distance /* from p */ = Math.sqrt(
+  //     Math.pow(midpoint[0] - point[0], 2) + 
+  //     Math.pow(midpoint[1] - point[1], 2)
+  //   );
+    
+  //   double edge_length = Math.sqrt(
+  //     Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
+  //     Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
+  //   );
+    
+  //   edge_length *= distance/100.0;
+    
+  //   return distance + edge_length;
+  // }
+  
+  // optimized for large-scale test
   double weight(Integer a, Integer b, Integer p) {
     int[] point = locationCoords[p];
     double[] midpoint = new double[] {
       (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
       (locationCoords[a][1] + locationCoords[b][1]) / 2.0,
     };
-    double distance /* from p */ = Math.sqrt(
-      Math.pow(midpoint[0] - point[0], 2) + 
-      Math.pow(midpoint[1] - point[1], 2)
-    );
+    double distance = Math.pow(midpoint[0] - point[0], 2) + Math.pow(midpoint[1] - point[1], 2);
     
-    double edge_length = Math.sqrt(
-      Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
-      Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
-    );
-    
-    edge_length *= distance/100.0;
-    
-    return distance + edge_length;
+    return distance;
   }
   
 }

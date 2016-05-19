@@ -1,22 +1,23 @@
-import sys
-import matplotlib
-import matplotlib.pyplot as plt
-
-matplotlib.rcParams['toolbar'] = 'None'
-
 try:
-  if len(sys.argv) < 3 or sys.argv[1] == "" or sys.argv[2] == "":
-    print("Usage: python gen_map.py 'title' '(0, 0) (1, 0)'")
+  import sys
+  import matplotlib
+  import matplotlib.pyplot as plt
+  
+  matplotlib.rcParams['toolbar'] = 'None'
+  
+  if len(sys.argv) < 2 or sys.argv[1] == "":
+    print("Usage: python gen_map.py 'title' <<< '(0, 0) (1, 0)'")
     print("where the number array is the path coordinate output from a java TS solver")
     sys.exit()
-
+  
+  paths=raw_input()
   coords = []
-  for line in sys.argv[2].split(") ("):
+  for line in paths.split(") ("):
     strNums = line.split(", ")
     if len(strNums) > 1:
       strNums[0] = ''.join([c for c in strNums[0] if c in '1234567890.'])
       strNums[1] = ''.join([c for c in strNums[1] if c in '1234567890.'])
-      coords.append([int(strNums[0]), int(strNums[1])])
+      coords.append([float(strNums[0]), float(strNums[1])])
   #coords = [x for (y,x) in sorted(zip(path,coords))]
 
   x = []
@@ -35,5 +36,4 @@ try:
 
   plt.show()
   
-except:
-  print "Cannot show graph"
+except Exception,e: print str(e)

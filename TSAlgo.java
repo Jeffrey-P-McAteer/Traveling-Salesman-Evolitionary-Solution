@@ -25,10 +25,8 @@ public class TSAlgo {
   
   public static void test(TSAlgo algo, String... args) throws Exception {
     if (args.length < 1) {
-      out.printf("Usage: java %s citydata.txt [false]\n", algo.getAlgoName());
+      out.printf("Usage: java %s citydata.txt\n", algo.getAlgoName());
       out.printf("Where citydata.txt holds one space-deliminated coordinate pair per line\n");
-      out.printf("and the last argument is to control if the found path is printed\n");
-      out.printf("(defaults to true, any value at all causes falsey behaviour)");
     }
     populateLocationCoords(args[0]);
     
@@ -36,27 +34,26 @@ public class TSAlgo {
     int[] path = algo.solve();
     long delta = System.nanoTime() - begin;
     if (path == null) {
-      System.out.printf("%s does not implement travelling salesman.\n", algo.getAlgoName());
+      out.printf("%s does not implement travelling salesman.\n", algo.getAlgoName());
       return;
     }
-    System.out.printf("%s took %,.2fms to find a path of length %,.2f\n", algo.getAlgoName(), delta/1_000_000.0, pathLength(path));
+    out.printf("%s took %,.2fms to find a path of length %,.2f", algo.getAlgoName(), delta/1_000_000.0, pathLength(path));
+    out.println();
     
-    if (args.length < 2) {
-      /*
-      System.out.printf("Path indexes: ");
-      for (int p : path) {
-        System.out.printf("%d, ", p);
-      }
-      System.out.println();
-      /**/
-      /*
-      System.out.printf("Path coordinates: ");
-      for (int p : path) {
-        System.out.printf("(%.1f, %.1f) ", locationCoords[p][0], locationCoords[p][1]);
-      }
-      System.out.println();
-      /**/
+    /*
+    out.printf("Path indexes: ");
+    for (int p : path) {
+      out.printf("%d, ", p);
     }
+    out.println();
+    /**/
+    //*
+    out.printf("Path coordinates: ");
+    for (int p : path) {
+      out.printf("(%.1f, %.1f) ", locationCoords[p][0], locationCoords[p][1]);
+    }
+    out.println();
+    /**/
   }
   
   /**
@@ -77,24 +74,6 @@ public class TSAlgo {
           .forEach(j -> locationCoords[i][j] = Double.parseDouble(xAndY[j]));
       });
   }
-  
-  /* development functions */
-  
-  /*public static void print(int[][] ints) {
-    for (int[] i : ints) {
-      out.print("[ ");
-      print(i);
-      out.print(" ],");
-    }
-    out.println();
-  }
-  
-  public static void print(int[] ints) {
-    out.print("{");
-    for (int i : ints) out.print(i+", ");
-    out.print("}");
-    out.println();
-  }*/
   
   /* useful functions which ought to be standard throughout every algorithm for comparison purposes */
   

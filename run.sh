@@ -11,11 +11,11 @@ tstamp=$(date +%s)
 
 for class in "${@:2}"; do
   allOut=$(java -ea -Xmx4098m $class "cities/$1.txt")
-  pth=$(echo "$allOut" | tail -n 1 | sed 's/.*: //g')
-  len=$(echo "$allOut" | head -n 1 | cut -d' ' -f 10)
-  ms=$(echo "$allOut" | head -n 1 | cut -d' ' -f 3 | sed 's/ms//g')
-  python gen_map.py "$class - $len" "$pth" &
-  cat <<< $allOut
+  pth=$(cat <<< "$allOut" | tail -n 1 | sed 's/.*: //g')
+  len=$(cat <<< "$allOut" | head -n 1 | cut -d' ' -f 10)
+  ms=$(cat <<< "$allOut" | head -n 1 | cut -d' ' -f 3 | sed 's/ms//g')
+  python gen_map.py "$class - $len" <<< "$pth" &
+  cat <<< "$allOut" | head -n 1
   
 done
 

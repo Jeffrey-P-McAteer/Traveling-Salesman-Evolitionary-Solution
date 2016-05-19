@@ -49,7 +49,7 @@ public class TSAlgo {
       }
       System.out.println();
       /**/
-      //*
+      /*
       System.out.printf("Path coordinates: ");
       for (int p : path) {
         System.out.printf("(%.1f, %.1f) ", locationCoords[p][0], locationCoords[p][1]);

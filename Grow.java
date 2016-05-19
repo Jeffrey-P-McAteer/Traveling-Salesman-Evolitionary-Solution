@@ -43,13 +43,13 @@ public class Grow extends TSAlgo {
     while (unselected.size() > 0) {
       if (unselected.size() % 100 == 0) {
         long elapsed_ms = (System.nanoTime() - begin_nano) / 1_000_000l;
-        long milliseconds_per_point = elapsed_ms / selected.size();
-        long remaining_ms = unselected.size() * milliseconds_per_point;
+        double milliseconds_per_point = elapsed_ms / (double) selected.size();
+        long remaining_ms = (long) (unselected.size() * milliseconds_per_point);
         int[] path = new int[selected.size()];
         for (int i=0; i<path.length; i++) {
           path[i] = selected.get(i);
         }
-        System.err.printf("%.4f%% complete, %,dms remaining, path length %,.2f units \r", (double) selected.size()/total, remaining_ms, pathLength(path));
+        System.err.printf("%.4f%% complete, %,dms remaining, %,dms elapsed, path length %,.2f units \r", (double) (selected.size()/total) * 100, remaining_ms, elapsed_ms, pathLength(path));
       }
       
       Integer point = unselected.remove(0);
@@ -79,6 +79,7 @@ public class Grow extends TSAlgo {
         selected.add(insert, point);
       }
     }
+    System.err.println();
     
     int[] path = new int[locationCoords.length];
     for (int i=0; i<path.length; i++) {
@@ -90,37 +91,37 @@ public class Grow extends TSAlgo {
   /**
    * Describes the weight of an edge between a and b, and point p.
    */
-  // double weight(Integer a, Integer b, Integer p) {
-  //   int[] point = locationCoords[p];
-  //   double[] midpoint = new double[] {
-  //     (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
-  //     (locationCoords[a][1] + locationCoords[b][1]) / 2.0,
-  //   };
-  //   double distance /* from p */ = Math.sqrt(
-  //     Math.pow(midpoint[0] - point[0], 2) + 
-  //     Math.pow(midpoint[1] - point[1], 2)
-  //   );
-    
-  //   double edge_length = Math.sqrt(
-  //     Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
-  //     Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
-  //   );
-    
-  //   edge_length *= distance/100.0;
-    
-  //   return distance + edge_length;
-  // }
-  
-  // optimized for large-scale test
   double weight(Integer a, Integer b, Integer p) {
     double[] point = locationCoords[p];
     double[] midpoint = new double[] {
       (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
       (locationCoords[a][1] + locationCoords[b][1]) / 2.0,
     };
-    double distance = Math.pow(midpoint[0] - point[0], 2) + Math.pow(midpoint[1] - point[1], 2);
+    double distance /* from p */ = Math.sqrt(
+      Math.pow(midpoint[0] - point[0], 2) + 
+      Math.pow(midpoint[1] - point[1], 2)
+    );
     
-    return distance;
+    double edge_length = Math.sqrt(
+      Math.pow(locationCoords[a][0] - locationCoords[b][0], 2) + 
+      Math.pow(locationCoords[a][1] - locationCoords[b][1], 2)
+    );
+    
+    edge_length *= distance/100.0;
+    
+    return distance + edge_length;
   }
+  
+  // optimized for large-scale test
+  // double weight(Integer a, Integer b, Integer p) {
+  //   double[] point = locationCoords[p];
+  //   double[] midpoint = new double[] {
+  //     (locationCoords[a][0] + locationCoords[b][0]) / 2.0,
+  //     (locationCoords[a][1] + locationCoords[b][1]) / 2.0,
+  //   };
+  //   double distance = Math.pow(midpoint[0] - point[0], 2) + Math.pow(midpoint[1] - point[1], 2);
+    
+  //   return distance;
+  // }
   
 }

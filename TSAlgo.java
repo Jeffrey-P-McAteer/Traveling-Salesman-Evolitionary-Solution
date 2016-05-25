@@ -1,226 +1,77 @@
-import static java.lang.System.out;
-import java.util.stream.*;
-import java.util.*;
 import java.io.*;
-
+import java.util.*;
 
 /**
- * Superclas holding useful TS Stuff that ought to be the same in all algorithms
- * main acts as a tester
+ * A superclass for different traveling salesman algorithms
+ * Contains useful functions which should be standard for every algorithm
  * @author Jeffrey McAteer
  */
 public class TSAlgo {
-  // Override and change to appropriate algo name
-  public String getAlgoName() { return "None"; }
   
-  public static double[][] locationCoords;
+  public static double[][] weights;
   
-  // Must be overidden
-  // Should return the best possible path for the cities in locationCoords
+  public TSAlgo(String tspFile) {
+    try {
+      String fileContents = new Scanner(new File(tspFile)).useDelimiter("\\Z").next();
+      String[] lines = fileContents.split("\n");
+      int vertices = Integer.parseInt(lines[3].split(": ")[1]);
+      
+      double[][] coordinates = new double[vertices][2];
+      
+      for (int i=0; i<vertices; i++) {
+        String[] rows = lines[i+6].split(" ");
+        coordinates[i][0] = Double.parseDouble(rows[1]);
+        coordinates[i][1] = Double.parseDouble(rows[2]);
+      }
+      //shuffle(coordinates);
+      
+      double[][] weights = new double[vertices][vertices];
+      
+      for (int i=0; i < vertices; i++) {
+        for (int j=0; j < vertices; j++) {
+          if (i == j) {
+            weights[i][j] = Double.POSITIVE_INFINITY;
+            continue;
+          }
+          // sqrt((x1-x2)^2 + (y1-y2)^2)
+          weights[i][j] = Math.sqrt(
+            Math.pow(coordinates[i][0] - coordinates[j][0], 2) + 
+            Math.pow(coordinates[i][1] - coordinates[j][1], 2)
+          );
+        }
+      }
+      
+      this.weights = weights;
+    } catch (Exception e) {
+      e.printStackTrace();
+      System.exit(0);
+    }
+  }
+  
   public int[] solve() { return null; }
   
-  public static void main(String... args) throws Exception {
-    test(new TSAlgo(), args);
-  }
-  
-  public static void test(TSAlgo algo, String... args) throws Exception {
-    if (args.length < 1) {
-      out.printf("Usage: java %s citydata.txt\n", algo.getAlgoName());
-      out.printf("Where citydata.txt holds one space-deliminated coordinate pair per line\n");
-    }
-    populateLocationCoords(args[0]);
-    
-    long begin = System.nanoTime();
-    int[] path = algo.solve();
-    long delta = System.nanoTime() - begin;
-    if (path == null) {
-      out.printf("%s does not implement travelling salesman.\n", algo.getAlgoName());
-      return;
-    }
-    out.printf("%s took %,.2fms to find a path of length %,.2f", algo.getAlgoName(), delta/1_000_000.0, pathLength(path));
-    out.println();
-    
-    /*
-    out.printf("Path indexes: ");
-    for (int p : path) {
-      out.printf("%d, ", p);
-    }
-    out.println();
-    /**/
-    //*
-    out.printf("Path coordinates: ");
-    for (int p : path) {
-      out.printf("(%.1f, %.1f) ", locationCoords[p][0], locationCoords[p][1]);
-    }
-    out.println();
-    /**/
-  }
-  
-  /**
-   * Reads a test file with city coords on each line, such as:
-   * 10 20
-   * 40 60
-   * 5 6
-   * which represents 3 cities at (10,20), (40,60), and (5,6)
-   */
-  private static void populateLocationCoords(String filename) throws Exception {
-    String citiesData = new Scanner(new File(filename)).useDelimiter("\\Z").next();
-    String[] cities = citiesData.split("\n");
-    locationCoords = new double[cities.length][2];
-    IntStream.range(0, cities.length)
-      .forEach(i -> {
-        String[] xAndY = cities[i].split(" ");
-        IntStream.range(0, xAndY.length)
-          .forEach(j -> locationCoords[i][j] = Double.parseDouble(xAndY[j]));
-      });
-  }
-  
-  /* useful functions which ought to be standard throughout every algorithm for comparison purposes */
-  
-  // create original path which stupidly goes from city 1 to city 2 to city 3....
-  public static int[] getDefaultPath() {
-    int[] path = new int[locationCoords.length];
-    for (int i=0; i<path.length; i++) path[i] = i;
-    return path;
-  }
-  
-  // returns the best path from a list of possible paths
-  public static int[] getBestPath(int[]... paths) {
-    double[] pathsLengths = new double[paths.length];
-    for (int i=0; i<paths.length; i++) {
-      pathsLengths[i] = pathLength(paths[i]);
-    }
-    int shortestIndex = 0;
-    for (int i=0; i<pathsLengths.length; i++) {
-      if (pathsLengths[i] < pathsLengths[shortestIndex]) {
-        shortestIndex = i;
-      }
-    }
-    return paths[shortestIndex];
-  }
-  
-  // returns the shortest UNCLOSED path from the given paths
-  // (does not calculate final edge's length)
-  public static int[] getBestUnclosedPath(int[]... paths) {
-    double[] pathsLengths = new double[paths.length];
-    for (int i=0; i<paths.length; i++) {
-      if (paths[i].length < 1) {
-        pathsLengths[i] = Double.MAX_VALUE;
-      } else {
-        pathsLengths[i] = unclosedPathLength(paths[i]);
-      }
-    }
-    int shortestIndex = 0;
-    for (int i=0; i<pathsLengths.length; i++) {
-      if (pathsLengths[i] < pathsLengths[shortestIndex]) {
-        shortestIndex = i;
-      }
-    }
-    return paths[shortestIndex];
-  }
-  
-  public static double pathLength(int... path) {
-    double totalLen = 0;
-    int firstCity = path[0];
-    int secondCity = path[path.length-1];
-    totalLen += distance(locationCoords[firstCity], locationCoords[secondCity]);
-    return unclosedPathLength(path) + totalLen;
-  }
-  
-  // calculates everything but last edge
-  public static double unclosedPathLength(int... path) {
-    double totalLen = 0;
-    for (int i=0; i<path.length-1; i++) {
+  public static double pathLength(int[] path) {
+    double totalLen = 0.0;
+    for (int i=0; i<path.length; i++) {
       int firstCity = path[i];
-      int secondCity = path[i+1];
-      totalLen += distance(locationCoords[firstCity], locationCoords[secondCity]);
+      int secondCity = path[(i+1) % path.length];
+      totalLen += weights[firstCity][secondCity];
     }
     return totalLen;
   }
   
-  public static double distance(double[] coord1, double[] coord2) {
-    double[] delta = new double[] {
-      coord1[0] - coord2[0],
-      coord1[1] - coord2[1]
-    };
-    return Math.sqrt(Math.pow(delta[0], 2) + Math.pow(delta[1], 2));
-  }
-  
-  /* Array manipulation methods */
-  
-  public static int[] clone(int[] arr) {
-    int[] newArr = new int[arr.length];
-    moveFrom(arr, newArr);
-    return newArr;
-  }
-  
-  public static void moveFrom(int[] a, int[] b) {
-    assert a.length == b.length;
-    for (int i=0; i<a.length; i++) {
-      b[i] = a[i];
+  /**
+   * From StackOverflow.
+   * Fisher–Yates shuffle.
+   */
+  public static void shuffle(double[][] ar) {
+    Random rnd = new Random();
+    for (int i = ar.length - 1; i >= 0; i--) {
+      int index = rnd.nextInt(i + 1);
+      double[] a = ar[index];
+      ar[index] = ar[i];
+      ar[i] = a;
     }
-  }
-  
-  // sets all values in array to -1
-  public static int[] setIntsToNullish(int[] arr) {
-    for (int j=0; j<arr.length; j++) {
-      arr[j] = -1;
-    }
-    return arr;
-  }
-  
-  // sets all values in 2d array to -1
-  public static int[][] setIntsToNullish(int[][] arr) {
-    for (int i=0; i<arr.length; i++) {
-      setIntsToNullish(arr[i]);
-    }
-    return arr;
-  }
-  
-  // in the case of int datatypes we assume negatives are 'null' values
-  // removes every element after the first null (eg {1,2,3,null,4,5} -> {1,2,3})
-  // should only be used when it can be garanteed that the array ends in nulls only
-  public static int[] removeNulls(int[] arr) {
-    int firstNullIndex = 0;
-    while (firstNullIndex < arr.length && arr[firstNullIndex] >= 0) firstNullIndex++;
-    return Arrays.copyOfRange(arr, 0, firstNullIndex);
-  }
-  
-  // does not remove empty lists
-  public static int[][] removeNulls(int[][] arr) {
-    for (int i=0; i<arr.length; i++) {
-      arr[i] = removeNulls(arr[i]);
-    }
-    return arr;
-  }
-  
-  public static int fact(int n) {
-    if (n < 2) return 1;
-    return fact(n-1) * n;
-  }
-  
-  public static int[] reverse(int[] b) {
-    int[] a = clone(b);
-    // stole & modified from stackoverflow.com/a/2137791
-    for(int i = 0; i < a.length / 2; i++) {
-      int temp = a[i];
-      a[i] = a[a.length - i - 1];
-      a[a.length - i - 1] = temp;
-    }
-    return a;
-  }
-  
-  // stolen at stackoverflow.com/a/80503, courtesy of jeannicolas
-  public static int[] concatenate (int[] a, int[] b) {
-    int aLen = a.length;
-    int bLen = b.length;
-    
-    @SuppressWarnings("unchecked")
-    int[] c = (int[]) java.lang.reflect.Array.newInstance(a.getClass().getComponentType(), aLen+bLen);
-    System.arraycopy(a, 0, c, 0, aLen);
-    System.arraycopy(b, 0, c, aLen, bLen);
-    
-    return c;
   }
   
 }

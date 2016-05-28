@@ -10,6 +10,8 @@ import java.awt.*;
  * @author Jeffrey McAteer
  */
 public class TSAlgo {
+  public static final boolean PROGRESS = true;
+  public static final String CLEAR = "                                                \r";
   
   public static double[][] coordinates;
   
@@ -24,6 +26,10 @@ public class TSAlgo {
       coordinates = new double[vertices][2];
       
       for (int i=0; i<vertices; i++) {
+        if (PROGRESS) {
+          System.err.print(CLEAR);
+          System.err.printf("Parsing vertices %,d/%,d\r", i, vertices);
+        }
         String[] rows = lines[i+6].split(" ");
         coordinates[i][0] = Double.parseDouble(rows[1]);
         coordinates[i][1] = Double.parseDouble(rows[2]);
@@ -34,6 +40,10 @@ public class TSAlgo {
       weights = new double[vertices][vertices];
       
       for (int i=0; i < vertices; i++) {
+        if (PROGRESS) {
+          System.err.print(CLEAR);
+          System.err.printf("Computing edge lengths %,d/%,d\r", i, vertices);
+        }
         for (int j=0; j < vertices; j++) {
           if (i == j) {
             weights[i][j] = Double.POSITIVE_INFINITY;
@@ -115,7 +125,7 @@ public class TSAlgo {
       public void paint(Graphics g) {
         for (int i=0; i<path.length; i++) {
           int a = path[i];
-          int b = path[(i+1)%path.length];
+          int b = path[(i+1) % path.length];
           double[] a_coords = convert(coordinates[a]);
           double[] b_coords = convert(coordinates[b]);
           
@@ -128,8 +138,8 @@ public class TSAlgo {
                      oval_size*2, oval_size*2
           );
           
-          g.drawString(""+i, (int) a_coords[0]+(oval_size*2),
-                             (int) a_coords[1]+(oval_size*2));
+          g.drawString(""+a, (int) (a_coords[0]+(oval_size*1.4)),
+                             (int) (a_coords[1]+(oval_size*1.4)));
           
         }
       }

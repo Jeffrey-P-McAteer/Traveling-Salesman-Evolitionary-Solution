@@ -2,7 +2,6 @@ import java.util.stream.*;
 import java.util.Arrays;
 
 public class GeneralTSP extends TSAlgo {
-  public static final boolean PROGRESS = true;
   
   public GeneralTSP(String s) {
     super(s);
@@ -20,7 +19,8 @@ public class GeneralTSP extends TSAlgo {
     
     while (path.length < weights.length) {
       if (PROGRESS) {
-        System.err.printf("%,d/%,d                 \r", path.length, weights.length);
+        System.err.print(CLEAR);
+        System.err.printf("Solving %,d/%,d\r", path.length, weights.length);
       }
       
       int new_point = path.length;

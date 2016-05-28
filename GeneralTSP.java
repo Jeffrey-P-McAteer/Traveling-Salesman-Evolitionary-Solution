@@ -14,6 +14,7 @@ public class GeneralTSP extends TSAlgo {
       IntStream.range(0, path.length).forEach(i -> path[i] = i);
       return path;
     }
+    
     int[] path = new int[3];
     for (int i=0; i<3; i++) path[i] = i;
     
@@ -21,9 +22,6 @@ public class GeneralTSP extends TSAlgo {
       if (PROGRESS) {
         System.err.printf("%,d/%,d                 \r", path.length, weights.length);
       }
-      // System.out.printf("Path: ");
-      // for (int i : path) System.out.printf("%d, ", i);
-      // System.out.println();
       
       int new_point = path.length;
       

@@ -1,5 +1,5 @@
 NAME : flower
-COMMENT : An oft-studied graph of mine
+COMMENT : An oft-studied graph of mine (n = 0)
 TYPE : TSP
 DIMENSION : 9
 EDGE_WEIGHT_TYPE : EUC_2D

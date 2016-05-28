@@ -51,6 +51,7 @@ public class Test {
           out.printf("%d, ", j);
         }
         out.println();
+        algorithms[i].display(path, "$1 solved by "+algoNames[i]);
       }
     }
   }

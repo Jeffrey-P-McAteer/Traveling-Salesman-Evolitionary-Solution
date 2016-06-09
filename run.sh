@@ -62,7 +62,12 @@ rm .middle*
 
 javac *.java || exit 0
 
-java -ea -Xms6g -Xmx6g Test
+if [ $(hostname) == "cs.cpsc.umw.edu" ]; then
+  echo "Increasing Heap memory, we are on CS server"
+  java -ea -Xmsg -Xmxg Test
+else
+  java -ea -Xms6g -Xmx6g Test
+fi
 
 rm Test.java
 rm *.class

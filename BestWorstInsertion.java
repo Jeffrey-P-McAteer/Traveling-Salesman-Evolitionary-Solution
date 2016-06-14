@@ -76,11 +76,12 @@ public class BestWorstInsertion extends TSAlgo {
     int[] optimum_indexes = new int[pts_not_in_graph.length];
     
     // for every point not in the graph
-    for (int i=0; i<pts_not_in_graph.length; i++) {
-      int new_pt = pts_not_in_graph[i];
-      optimum_indexes[i] = getBestInsertPoint(path, new_pt);
-      optimum_deltas[i] = getDelta(path, new_pt, optimum_indexes[i]);
-    }
+    IntStream.range(0, pts_not_in_graph.length).parallel().forEach(
+      i -> {
+        int new_pt = pts_not_in_graph[i];
+        optimum_indexes[i] = getBestInsertPoint(path, new_pt);
+        optimum_deltas[i] = getDelta(path, new_pt, optimum_indexes[i]);
+      });
     
     // now pick the worst optimum_delta
     int worst_best_delta = 0;

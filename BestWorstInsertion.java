@@ -6,9 +6,7 @@ public class BestWorstInsertion extends TSAlgo {
 	public BestWorstInsertion(String s) {
     super(s);
   }
-
-  private Random rand = new Random();
-
+  
   public int[] solve() {
     int[] path = new int[] {0, 1, 2};
     // We must choose the 3 points furthest away.
@@ -41,7 +39,6 @@ public class BestWorstInsertion extends TSAlgo {
     // path[0], [1], and [2] now make the largest
     // triangle possible out of all points
     
-    Random rand = new Random();
     debugPath(path);
     
     // while we have not added every point

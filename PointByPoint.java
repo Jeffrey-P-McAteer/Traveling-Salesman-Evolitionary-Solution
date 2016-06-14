@@ -3,9 +3,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * This began as a general solution to TSP, but now
- * uses a theta value derived from the physical positions
- * of verticies.
+ * This began as a general solution to TSP
  */
 public class PointByPoint extends TSAlgo {
   // PROGRESS flag is in TSAlgo
@@ -16,22 +14,52 @@ public class PointByPoint extends TSAlgo {
   }
   
   public int[] solve() {
+    // handle all the easy cases
+    if (weights == null) {
+      return null;
+    }
     if (weights.length < 3) {
       int[] path = new int[weights.length];
       IntStream.range(0, path.length).forEach(i -> path[i] = i);
       return path;
     }
     
-    int[] path = new int[] { 0, 1, 2 };
+    int[] path = new int[3];
+    // We must choose the 3 points furthest away.
+    // First, find the furthest 2 points in the patrix.
+    for (int row=0; row<weights.length; row++) {
+      for (int col=0; col<weights[0].length; col++) {
+        if (row == col) continue;
+        double best = weights[path[0]][path[1]];
+        double current = weights[row][col];
+        if (current > best) {
+          path[0] = row;
+          path[1] = col;
+        }
+      }
+    }
+    // point[0] and point[1] are the furthest points
+    for (int row=0; row<weights.length; row++) {
+      if (row == path[0] || row == path[1]) continue;
+      double best = weights[path[0]][path[2]] + weights[path[1]][path[2]];
+      double current = weights[path[0]][row] + weights[path[1]][row];
+      if (current > best) {
+        path[2] = row;
+      }
+    }
+    // point[0], [1], and [2] now make the largest
+    // triangle possible out of all points
+    
     Random rand = new Random();
     
+    // while we have not added every point
     while (path.length < weights.length) {
       if (PROGRESS) {
         System.err.print(CLEAR);
         System.err.printf("Solving %,d/%,d\r", path.length, weights.length);
       }
       
-      int new_point;// = path.length;
+      int new_point;
       a: while (true) {
         new_point = rand.nextInt(weights.length);
         for (int i=0;i<path.length; i++) {
@@ -70,10 +98,6 @@ public class PointByPoint extends TSAlgo {
         new int[] { new_point },
         Arrays.copyOfRange(path, best+1, path.length)); // begins at path[best+1]
       
-      if () {
-        
-      }
-      
       if (weights.length < 20) {
         System.out.print("Path: ");
         for (int p : path) {
@@ -82,7 +106,7 @@ public class PointByPoint extends TSAlgo {
         System.out.println();
       }
       
-      if (SHOW_STEP_GRAPHS) {
+      if (SHOW_STEP_GRAPHS && weights.length < 20) {
         displayAsync(path, ""+path.length);
       }
     }

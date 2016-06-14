@@ -43,6 +43,19 @@ public class Test {
         out.printf("%s does not implement a solution\n", algoNames[i]);
         continue;
       }
+      boolean repeats = false;
+      outer: for (int ii=0; ii<path.length; ii++) {
+        for (int jj=ii+1; jj<path.length; jj++) {
+          if (path[ii] == path[jj]) {
+            repeats = true;
+            break outer;
+          }
+        }
+      }
+      if (repeats || path.length != algorithms[i].weights.length) {
+        out.printf("%s does not give a correct solution\n", algoNames[i]);
+        continue;
+      }
       double length = TSAlgo.pathLength(path);
       out.printf("%s \t %,.2f units long \t %,d ms\n", algoNames[i], length, msTaken);
       if (path.length < $path_length_threshold) {

@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,8 +11,9 @@ import java.awt.*;
  * @author Jeffrey McAteer
  */
 public class TSAlgo {
+  public static final boolean DUMP = false;
   public static final boolean PROGRESS = true;
-  public static final String CLEAR = "                                                \r";
+  public static final String CLEAR = "                                        \r";
   
   public static double[][] coordinates;
   
@@ -25,35 +27,57 @@ public class TSAlgo {
       
       coordinates = new double[vertices][2];
       
-      for (int i=0; i<vertices; i++) {
-        if (PROGRESS) {
-          System.err.print(CLEAR);
-          System.err.printf("Parsing vertices %,d/%,d\r", i, vertices);
-        }
-        String[] rows = lines[i+6].split(" ");
-        coordinates[i][0] = Double.parseDouble(rows[1]);
-        coordinates[i][1] = Double.parseDouble(rows[2]);
-      }
+      IntStream.range(0, vertices).parallel().forEach(
+        i -> {
+          if (PROGRESS) {
+            System.err.print(CLEAR);
+            System.err.printf("Parsing vertices %,d/%,d\r", i, vertices);
+          }
+          String[] rows = lines[i+6].split(" ");
+          coordinates[i][0] = Double.parseDouble(rows[1]);
+          coordinates[i][1] = Double.parseDouble(rows[2]);
+      });
+      
       // good for testing
-      shuffle(coordinates);
+      if (coordinates.length < 50) {
+        int r = new Random().nextInt(coordinates.length);
+        for (int i=0; i<r; i++) {
+          shuffle(coordinates);
+        }
+      }
       
       weights = new double[vertices][vertices];
       
-      for (int i=0; i < vertices; i++) {
-        if (PROGRESS) {
-          System.err.print(CLEAR);
-          System.err.printf("Computing edge lengths %,d/%,d\r", i, vertices);
-        }
-        for (int j=0; j < vertices; j++) {
-          if (i == j) {
-            weights[i][j] = Double.POSITIVE_INFINITY;
-            continue;
+      IntStream.range(0, vertices).parallel().forEach(
+        i -> {
+          if (PROGRESS) {
+            System.err.print(CLEAR);
+            System.err.printf("Computing edge lengths %,d/%,d\r", i, vertices);
           }
-          // sqrt((x1-x2)^2 + (y1-y2)^2)
-          weights[i][j] = Math.sqrt(
-            Math.pow(coordinates[i][0] - coordinates[j][0], 2) + 
-            Math.pow(coordinates[i][1] - coordinates[j][1], 2)
-          );
+          for (int j=0; j < vertices; j++) {
+            if (i == j) {
+              weights[i][j] = Double.POSITIVE_INFINITY;
+              continue;
+            }
+            // sqrt((x1-x2)^2 + (y1-y2)^2)
+            weights[i][j] = Math.sqrt(
+              Math.pow(coordinates[i][0] - coordinates[j][0], 2) + 
+              Math.pow(coordinates[i][1] - coordinates[j][1], 2)
+            );
+          }
+        }
+      );
+      
+      if (DUMP && coordinates.length < 50) {
+        for (int row=0; row<weights.length; row++) {
+          for (int col=0; col<weights[0].length; col++) {
+            if (weights[row][col] == Double.POSITIVE_INFINITY) {
+              System.out.print("Inf  ");
+            } else {
+              System.out.printf("%.2f ", weights[row][col]);
+            }
+          }
+          System.out.println();
         }
       }
       
@@ -89,7 +113,30 @@ public class TSAlgo {
     }
   }
   
+  public static void debugPath(int[] path) {
+    if (DUMP && weights.length < 20) {
+      System.out.print("Path: ");
+      for (int num : path) System.out.printf("%d ", num);
+      System.out.println();
+      
+      System.out.print("Path: ");
+      for (int p : path) {
+        System.out.printf("(%s %s) ", coordinates[p][0], coordinates[p][1]);
+      }
+      System.out.println();
+    }
+  }
+  
+  public static void displayAsync(int[] path, String title) {
+    new Thread() {
+      public void run() {
+        display(path, title);
+      }
+    }.start();
+  }
+  
   public static void display(int[] path, String title) {
+    
     final int size = 600;
     final int offset = 30;
     
@@ -123,6 +170,7 @@ public class TSAlgo {
         };
       }
       public void paint(Graphics g) {
+        boolean points = path.length < 100;
         for (int i=0; i<path.length; i++) {
           int a = path[i];
           int b = path[(i+1) % path.length];
@@ -132,15 +180,16 @@ public class TSAlgo {
           g.drawLine((int) a_coords[0], (int) a_coords[1],
                      (int) b_coords[0], (int) b_coords[1]);
           
-          int oval_size = 5;
-          g.fillOval((int) a_coords[0]-oval_size,
-                     (int) a_coords[1]-oval_size,
-                     oval_size*2, oval_size*2
-          );
-          
-          g.drawString(""+a, (int) (a_coords[0]+(oval_size*1.4)),
-                             (int) (a_coords[1]+(oval_size*1.4)));
-          
+          if (points) {
+            int oval_size = 5;
+            g.fillOval((int) a_coords[0]-oval_size,
+                       (int) a_coords[1]-oval_size,
+                       oval_size*2, oval_size*2
+            );
+            
+            g.drawString(""+a, (int) (a_coords[0]+(oval_size*1.4)),
+                               (int) (a_coords[1]+(oval_size*1.4)));
+          }
         }
       }
     };

@@ -33,7 +33,8 @@ public class TSAlgo {
             System.err.print(CLEAR);
             System.err.printf("Parsing vertices %,d/%,d\r", i, vertices);
           }
-          String[] rows = lines[i+6].split(" ");
+          String[] rows = lines[i+6].trim().replaceAll("  ", " ").split(" ");
+          
           coordinates[i][0] = Double.parseDouble(rows[1]);
           coordinates[i][1] = Double.parseDouble(rows[2]);
       });

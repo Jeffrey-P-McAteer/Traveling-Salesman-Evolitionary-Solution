@@ -26,16 +26,19 @@ public class BestWorstInsertion extends TSAlgo {
     }
     // path[0] and path[1] are the furthest points
     
+    // ensure path[2] != path[0] or [1]
     while (path[2] == path[0] || path[2] == path[1]) {
       path[2] = (path[2]+1) % weights.length;
     }
     
+    // pick the heaviest third point from the unselected points
+    double best = weights[path[0]][path[2]] + weights[path[1]][path[2]];
     for (int row=0; row<weights.length; row++) {
       if (row == path[0] || row == path[1]) continue;
-      double best = weights[path[0]][path[2]] + weights[path[1]][path[2]];
       double current = weights[path[0]][row] + weights[path[1]][row];
       if (current > best) {
         path[2] = row;
+        best = current;
       }
     }
     // path[0], [1], and [2] now make the largest
@@ -51,7 +54,6 @@ public class BestWorstInsertion extends TSAlgo {
       }
       
       path = insertPoint(path, getBestLongestPoint(path));
-      
       
       debugPath(path);
       //displayAsync(path, ""+path.length);
@@ -97,6 +99,7 @@ public class BestWorstInsertion extends TSAlgo {
     for (int i=0; i<optimum_deltas.length; i++) {
       if (optimum_deltas[i] > optimum_deltas[worst_best_delta]) {
         worst_best_delta = i;
+        
       }
     }
     

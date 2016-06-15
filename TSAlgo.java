@@ -18,6 +18,8 @@ public class TSAlgo {
   // Controls animation of progress
   public static final boolean PROGRESS = true;
   
+  public static final boolean NUMBERS = false;
+  
   // Clears a line of text for PROGRESS printouts
   public static final String CLEAR = "                                        \r";
   
@@ -194,8 +196,10 @@ public class TSAlgo {
                        oval_size*2, oval_size*2
             );
             
-            g.drawString(""+a, (int) (a_coords[0]+(oval_size*1.4)),
-                               (int) (a_coords[1]+(oval_size*1.4)));
+            if (NUMBERS) {
+              g.drawString(""+a, (int) (a_coords[0]+(oval_size*1.4)),
+                                 (int) (a_coords[1]+(oval_size*1.4)));
+            }
           }
         }
       }

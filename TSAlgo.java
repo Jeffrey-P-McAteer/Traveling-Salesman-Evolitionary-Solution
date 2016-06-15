@@ -11,8 +11,14 @@ import java.awt.*;
  * @author Jeffrey McAteer
  */
 public class TSAlgo {
-  public static final boolean DUMP = false;
+  
+  // Dumpt details about every step
+  public static final boolean DUMP = true;
+  
+  // Controls animation of progress
   public static final boolean PROGRESS = true;
+  
+  // Clears a line of text for PROGRESS printouts
   public static final String CLEAR = "                                        \r";
   
   public static double[][] coordinates;

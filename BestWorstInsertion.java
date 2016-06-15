@@ -7,6 +7,8 @@ public class BestWorstInsertion extends TSAlgo {
     super(s);
   }
   
+  public static Random rand = new Random();
+  
   public int[] solve() {
     int[] path = new int[] {0, 1, 2};
     // We must choose the 3 points furthest away.
@@ -48,15 +50,8 @@ public class BestWorstInsertion extends TSAlgo {
         System.err.printf("Solving %,d/%,d\r", path.length, weights.length);
       }
       
-      int[] new_point = getBestLongestPoint(path);
+      path = insertPoint(path, getBestLongestPoint(path));
       
-      int[] old_path = path;
-      int insert_point = new_point[1]+1;
-      // insert point (new_point[0].length) between points at (insert_point) and (insert_point+1)
-      path = concatinate(
-        Arrays.copyOfRange(path, 0, insert_point), // includes path[insert_point]
-        new int[] { new_point[0] },
-        Arrays.copyOfRange(path, insert_point, path.length)); // begins at path[insert_point+1]
       
       debugPath(path);
       //displayAsync(path, ""+path.length);
@@ -65,7 +60,24 @@ public class BestWorstInsertion extends TSAlgo {
     
     return path;
   }
-
+  
+  // syntactic sugar which takes the result of getBestLongestPoint() in one argument
+  public int[] insertPoint(int[] path, int[] pointAndLocation) {
+    int point = pointAndLocation[0];
+    int insert_point = pointAndLocation[1]+1;
+    return insertPoint(path, point, insert_point);
+  }
+  
+  /**
+   * inserts point into path at index location
+   */
+  public int[] insertPoint(int[] path, int point, int location) {
+    return concatinate(
+      Arrays.copyOfRange(path, 0, location), // includes path[location]
+      new int[] { point },
+      Arrays.copyOfRange(path, location, path.length)); // begins at path[location+1]
+  }
+  
   // return value [0] is the point to insert, [1] is the index at which to insert it
   public int[] getBestLongestPoint(int[] path) {
     int[] pts_not_in_graph = getAllPointsNotInGraph(path);
@@ -132,7 +144,7 @@ public class BestWorstInsertion extends TSAlgo {
         }
       }
       if (!in_path) {
-        if (DUMP) System.out.printf("%d is not in path\n", vertex);
+        //if (DUMP) System.out.printf("%d is not in path\n", vertex);
         pts_not_in_graph[not_in_graph_index] = vertex;
         not_in_graph_index++;
       }

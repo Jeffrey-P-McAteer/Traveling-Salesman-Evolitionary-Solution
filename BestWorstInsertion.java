@@ -56,7 +56,7 @@ public class BestWorstInsertion extends TSAlgo {
       path = insertPoint(path, getBestLongestPoint(path));
       
       debugPath(path);
-      //displayAsync(path, ""+path.length);
+      //displayAsync(path, "step "+path.length);
     }
     if (PROGRESS) System.err.println();
     

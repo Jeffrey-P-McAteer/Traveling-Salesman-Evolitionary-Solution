@@ -7,7 +7,7 @@ public class BestWorstInsertion extends TSAlgo {
     super(s);
   }
   
-  public static Random rand = new Random();
+  //public static Random rand = new Random();
   
   public int[] solve() {
     int[] path = new int[] {0, 1, 2};

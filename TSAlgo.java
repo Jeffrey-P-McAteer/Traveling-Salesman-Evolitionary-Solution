@@ -13,7 +13,7 @@ import java.awt.*;
 public class TSAlgo {
   
   // Dumpt details about every step
-  public static final boolean DUMP = true;
+  public static final boolean DUMP = false;
   
   // Controls animation of progress
   public static final boolean PROGRESS = true;

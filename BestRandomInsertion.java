@@ -2,86 +2,51 @@ import java.util.stream.IntStream;
 import java.util.Arrays;
 import java.util.Random;
 
-/**
- * Supercedes BestWorstInsertion by pickinng the worst optimums for the first half,
- * then the best optimums for the second half.
- */
-public class WorstHalfBestHalf extends TSAlgo {
-  public static final boolean NEAR = true;
-  public static final boolean FAR = false;
-  
-	public WorstHalfBestHalf(String s) {
+public class BestRandomInsertion extends TSAlgo {
+  public BestRandomInsertion(String s) {
     super(s);
+    rand = new Random();
   }
   
-  //public static Random rand = new Random();
+  public static Random rand;
   
   public int[] solve() {
-    int[] path = new int[] {0, 1, 2};
-    // We must choose the 3 points furthest away.
-    // First, find the furthest 2 points in the matrix.
-    for (int row=0; row<weights.length; row++) {
-      for (int col=0; col<weights[0].length; col++) {
-        if (row == col) continue;
-        double best = weights[path[0]][path[1]];
-        double current = weights[row][col];
-        if (current > best) {
-          path[0] = row;
-          path[1] = col;
-        }
-      }
+    // We choose 3 random points
+    int[] path = new int[] {
+      rand.nextInt(weights.length),
+      rand.nextInt(weights.length),
+      rand.nextInt(weights.length)
+    };
+    // And remove collisions
+    while (path[1] == path[0]) {
+      path[1] = rand.nextInt(weights.length);
     }
-    // path[0] and path[1] are the furthest points
-    
-    // ensure path[2] != path[0] or [1]
     while (path[2] == path[0] || path[2] == path[1]) {
-      path[2] = (path[2]+1) % weights.length;
+      path[2] = rand.nextInt(weights.length);
     }
-    
-    // pick the heaviest third point from the unselected points
-    double best = weights[path[0]][path[2]] + weights[path[1]][path[2]];
-    for (int row=0; row<weights.length; row++) {
-      if (row == path[0] || row == path[1]) continue;
-      double current = weights[path[0]][row] + weights[path[1]][row];
-      if (current > best) {
-        path[2] = row;
-        best = current;
-      }
-    }
-    // path[0], [1], and [2] now make the largest
-    // triangle possible out of all points
+    assert path[0] != path[1] && path[0] != path[2] && path [1] != path[2];
+    // path[0], [1], and [2] now 3 random points
     
     debugPath(path);
     
-    // solve first half
-    int half = weights.length/2;
-    while (path.length <= half) {
-      if (PROGRESS) {
-        System.err.print(CLEAR);
-        System.err.printf("Solving %,d/%,d\r", path.length, weights.length);
-      }
-      
-      path = insertPoint(path, getPoint(FAR, path));
-      debugPath(path);
-    }
-    
-    // solve second half
+    // while we have not added every point
     while (path.length < weights.length) {
       if (PROGRESS) {
         System.err.print(CLEAR);
         System.err.printf("Solving %,d/%,d\r", path.length, weights.length);
       }
       
-      path = insertPoint(path, getPoint(NEAR, path));
+      path = insertPoint(path, getBestRandomPoint(path));
+      
       debugPath(path);
+      //displayAsync(path, "step "+path.length);
     }
-    
     if (PROGRESS) System.err.println();
     
     return path;
   }
   
-  // syntactic sugar which takes the result of getBestLongestPoint() in one argument
+  // syntactic sugar which takes the result of getBestRandomPoint() in one argument
   public int[] insertPoint(int[] path, int[] pointAndLocation) {
     int point = pointAndLocation[0];
     int insert_point = pointAndLocation[1]+1;
@@ -99,7 +64,7 @@ public class WorstHalfBestHalf extends TSAlgo {
   }
   
   // return value [0] is the point to insert, [1] is the index at which to insert it
-  public int[] getPoint(boolean near, int[] path) { // getBestLongestPoint
+  public int[] getBestRandomPoint(int[] path) {
     int[] pts_not_in_graph = getAllPointsNotInGraph(path);
     double[] optimum_deltas = new double[pts_not_in_graph.length];
     int[] optimum_indexes = new int[pts_not_in_graph.length];
@@ -112,19 +77,15 @@ public class WorstHalfBestHalf extends TSAlgo {
         optimum_deltas[i] = getDelta(path, new_pt, optimum_indexes[i]);
       });
     
-    // now pick the worst or best optimum_delta
+    // now pick the worst optimum_delta
     int worst_best_delta = 0;
     for (int i=0; i<optimum_deltas.length; i++) {
-      if (near) {
-        if (optimum_deltas[i] < optimum_deltas[worst_best_delta]) {
-          worst_best_delta = i;
-        }
-      } else {
-        if (optimum_deltas[i] > optimum_deltas[worst_best_delta]) {
-          worst_best_delta = i;
-        }
+      if (optimum_deltas[i] > optimum_deltas[worst_best_delta]) {
+        worst_best_delta = i;
+        
       }
     }
+    worst_best_delta = rand.nextInt(optimum_deltas.length);
     
     return new int[] {
       pts_not_in_graph[worst_best_delta], // the point to insert
@@ -176,20 +137,6 @@ public class WorstHalfBestHalf extends TSAlgo {
       }
     }
     return pts_not_in_graph;
-  }
-
-  public static int[] concatinate(int[]... ints) {
-    int totalLen = 0;
-    for (int[] arr : ints) totalLen += arr.length;
-    int[] combined = new int[totalLen];
-    int i=0;
-    for (int[] arr : ints) {
-      for (int num : arr) {
-        combined[i] = num;
-        i++;
-      }
-    }
-    return combined;
   }
 
 }

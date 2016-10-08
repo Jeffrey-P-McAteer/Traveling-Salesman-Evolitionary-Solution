@@ -1,13 +1,10 @@
 import java.util.stream.IntStream;
 import java.util.Arrays;
-import java.util.Random;
 
 public class BestWorstInsertion extends TSAlgo {
 	public BestWorstInsertion(String s) {
     super(s);
   }
-  
-  //public static Random rand = new Random();
   
   public int[] solve() {
     int[] path = new int[] {0, 1, 2};
@@ -153,20 +150,6 @@ public class BestWorstInsertion extends TSAlgo {
       }
     }
     return pts_not_in_graph;
-  }
-
-  public static int[] concatinate(int[]... ints) {
-    int totalLen = 0;
-    for (int[] arr : ints) totalLen += arr.length;
-    int[] combined = new int[totalLen];
-    int i=0;
-    for (int[] arr : ints) {
-      for (int num : arr) {
-        combined[i] = num;
-        i++;
-      }
-    }
-    return combined;
   }
 
 }

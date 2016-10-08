@@ -122,6 +122,20 @@ public class TSAlgo {
     }
   }
   
+  public static int[] concatinate(int[]... ints) {
+    int totalLen = 0;
+    for (int[] arr : ints) totalLen += arr.length;
+    int[] combined = new int[totalLen];
+    int i=0;
+    for (int[] arr : ints) {
+      for (int num : arr) {
+        combined[i] = num;
+        i++;
+      }
+    }
+    return combined;
+  }
+  
   public static void debugPath(int[] path) {
     if (DUMP && weights.length < 20) {
       System.out.print("Path: ");

@@ -13,10 +13,10 @@ import java.awt.*;
 public class TSAlgo {
   
   // Dumpt details about every step
-  public static final boolean DUMP = false;
+  public static final boolean DUMP = System.getenv("DUMP") == null? false : System.getenv("DUMP").equalsIgnoreCase("true");
   
   // Controls animation of progress
-  public static final boolean PROGRESS = true;
+  public static final boolean PROGRESS = System.getenv("PROGRESS") == null? true : System.getenv("PROGRESS").equalsIgnoreCase("true");;
   
   public static final boolean NUMBERS = false;
   
@@ -28,6 +28,9 @@ public class TSAlgo {
   public static double[][] weights;
   
   public TSAlgo(String tspFile) {
+    if (tspFile == null) {
+      return;
+    }
     try {
       String fileContents = new Scanner(new File(tspFile)).useDelimiter("\\Z").next();
       String[] lines = fileContents.split("\n");
@@ -48,7 +51,7 @@ public class TSAlgo {
       });
       
       // good for testing
-      if (coordinates.length < 50) {
+      if (coordinates.length < 100) {
         int r = new Random().nextInt(coordinates.length);
         for (int i=0; i<r; i++) {
           shuffle(coordinates);
@@ -161,7 +164,7 @@ public class TSAlgo {
   public static void display(int[] path, String title) {
     
     final int size = 600;
-    final int offset = 30;
+    final int offset = 50;
     
     int leftmost = 0;
     int rightmost = 0;

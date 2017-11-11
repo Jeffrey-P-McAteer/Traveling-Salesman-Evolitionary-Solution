@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
+import java.util.function.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -162,6 +163,10 @@ public class TSAlgo {
   }
   
   public static void display(int[] path, String title) {
+    display(path, title, (double[] d, Graphics g) -> {});
+  }
+  
+  public static void display(int[] path, String title, BiConsumer<double[], Graphics> painter) {
     
     final int size = 600;
     final int offset = 50;
@@ -197,6 +202,7 @@ public class TSAlgo {
       }
       public void paint(Graphics g) {
         boolean points = path.length < 100;
+        g.drawString(title, 5, 5);
         for (int i=0; i<path.length; i++) {
           int a = path[i];
           int b = path[(i+1) % path.length];
@@ -219,6 +225,7 @@ public class TSAlgo {
             }
           }
         }
+        painter.accept(new double[] {size, width, height, offset}, g);
       }
     };
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

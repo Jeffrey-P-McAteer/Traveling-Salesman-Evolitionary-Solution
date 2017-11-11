@@ -2,8 +2,8 @@ import java.util.stream.IntStream;
 import java.util.Arrays;
 import java.util.Random;
 
-public class BestRandomInsertion extends TSAlgo {
-  public BestRandomInsertion(String s) {
+public class RandomTriangleWorstInsert extends TSAlgo {
+  public RandomTriangleWorstInsert(String s) {
     super(s);
     rand = new Random();
   }

@@ -1,8 +1,8 @@
 import java.util.stream.IntStream;
 import java.util.Arrays;
 
-public class BestWorstInsertion extends TSAlgo {
-	public BestWorstInsertion(String s) {
+public class LargeTriangleWorstInsert extends TSAlgo {
+	public LargeTriangleWorstInsert(String s) {
     super(s);
   }
   

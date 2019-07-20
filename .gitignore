@@ -1,0 +1,6 @@
+honest-profiler.zip
+honest-profiler/
+*.class
+*.hpl
+*.folded
+*.svg

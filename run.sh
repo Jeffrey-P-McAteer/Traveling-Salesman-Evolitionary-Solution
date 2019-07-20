@@ -1,11 +1,28 @@
 #!/bin/bash
 
+if ! [ -e honest-profiler/ ] ; then
+  wget -O honest-profiler.zip http://insightfullogic.com/honest-profiler.zip
+  mkdir honest-profiler/
+  unzip -d honest-profiler/ honest-profiler.zip
+fi
+
+export LIB_AGENT=$(find honest-profiler -name liblagent.so -print)
+export HPL_LOG=profiler-log.hpl
+export HPL_LOG_FOLDED=profiler-log.folded
+export FLAMEGRAPH=profiler-flamegraph.svg
+
+for f in "$HPL_LOG" "$HPL_LOG_FOLDED" "$FLAMEGRAPH" ; do
+  if [ -e "$f" ] ; then
+    rm "$f"
+  fi
+done
+
 if [ "$#" -lt 2 ]; then
   echo "Usage: ./run.sh problem.tsp TSAlgo [TSAlgo1 TSAlgo2....]"
   exit 0
 fi
 
-path_length_threshold=100
+path_length_threshold=1
 
 printf '' > .middle_1
 for class in "${@:2}"; do
@@ -75,12 +92,34 @@ rm .middle*
 
 javac *.java || exit 0
 
-if [ $(hostname) == "cs.cpsc.umw.edu" ]; then
-  echo "Increasing Heap memory, we are on CS server"
-  java -cp .: -ea -Xms24g -Xmx24g Test
-else
-  java -cp .: -ea -Xms2g -Xmx2g Test
+export CLASSPATH=$(find honest-profiler -name '*.jar' -print | tr '\n' ':')
+# You will need a javafx runtime with the class javafx.beans.property.SimpleObjectProperty
+if [ $(hostname) = 'azure-angel' ]; then
+  export CLASSPATH="$CLASSPATH":$(find /usr/lib/jvm/java-8-openjdk/jre/lib/ -name 'jfxrt.jar' -print | tr '\n' ':')
 fi
+export CLASSPATH="$CLASSPATH":.
+echo "CLASSPATH=$CLASSPATH"
+
+java \
+  -agentpath:"$LIB_AGENT"=interval=1,logPath="$HPL_LOG" \
+  -Djdk.gtk.version=2 \
+  -XX:CompileThreshold=20 \
+  -Xms1258m \
+  Test || exit 1
+
+java com.insightfullogic.honest_profiler.ports.console.FlameGraphDumperApplication "$HPL_LOG" "$HPL_LOG_FOLDED" || exit 1
+
+# yay -S flamegraph # see https://github.com/brendangregg/FlameGraph
+flamegraph.pl "$HPL_LOG_FOLDED" > "$FLAMEGRAPH"
+
+firefox "$FLAMEGRAPH"
+
+# if [ $(hostname) == "cs.cpsc.umw.edu" ]; then
+#   echo "Increasing Heap memory, we are on CS server"
+#   java -cp .: -ea -Xms24g -Xmx24g Test
+# else
+#   java -cp .: -ea -Xms2g -Xmx2g Test
+# fi
 
 rm Test.java
 rm *.class
